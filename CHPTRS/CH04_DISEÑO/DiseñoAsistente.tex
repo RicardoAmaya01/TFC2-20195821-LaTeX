@@ -7,9 +7,9 @@ En la sección anterior se determinó que el concepto de solución óptimo es aq
 
 
 \subsection{Sensor en el brazo}
-Un estudio realizado por \textcite{4.arm} demostró que la señal obtenida en el brazo de frecuencia cardíaca presenta mayor calidad y estabilidad en comparación con la obtenida en la muñeca, como en los relojes inteligentes. Los autores señalan que esto se debe a que, al estar ubicado el sensor en la zona braquial, existe menor interferencia causada por movimiento de los usuarios. Asimismo, mencionan que al encontrarse en una posición más cercana al corazón, también mejora la calidad de la señal a comparación de posiciones más bajas.\\
+Un estudio realizado por \textcite{4.arm} demostró que la señal de frecuencia cardíaca medida en el brazo de frecuencia cardíaca presenta mayor calidad y estabilidad en comparación con la obtenida en la muñeca, por ejemplo utilizando relojes inteligentes. Los autores señalan que esto se debe a que, al estar ubicado el sensor en la zona braquial, existe menor interferencia causada por movimiento de los usuarios. Asimismo, mencionan que al encontrarse en una posición más cercana al corazón, también mejora la calidad de la señal a comparación de posiciones más bajas.\\
 
-Los resultados de la investigación muestran que el 45\% de las señales registradas en el brazo fueron clasificadas como buenas o excelentes, mientras que menos del 15\% de las señales de la muñeca alcanzaron ese nivel como se puede apreciar en la Figura~\ref{fig:comparaciúnUbicación}. Asimismo, el estudio destaca que la posición optima del sensor es aproximadamente 3 centímetros por encima del codo y en la cara externa del bicep, lo cual coincide con la que se plantea en el concepto de solución óptimo.
+En la Figura~\ref{fig:comparaciúnUbicación} se muestra un extracto de los resultados de la investigación muestran que el 45\% de las señales registradas en el brazo fueron clasificadas como buenas o excelentes, mientras que menos del 15\% de las señales de la muñeca alcanzaron ese nivel. Asimismo, el estudio destaca que la posición optima del sensor es aproximadamente 3 centímetros por encima del codo y en la cara externa del bicep, lo cual coincide con la que se plantea en el concepto de solución óptimo.
 
 \begin{figure}[H]
 \centering
@@ -27,7 +27,7 @@ Para obtener la frecuencia cardíaca, el sensor utiliza fotopletismografía. Est
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.7\textwidth]{CHPTRS/CH04_DISEÑO/imagenes/ppg.png}
-\caption{Ilustración de medición de reflectancia PPG con multiples colores de led}
+\caption{Ilustración de medición de reflectancia con multiples colores de led}
 \label{fig:ppg}
 \captionsetup{justification=centering,margin=1cm}
 \caption*{\textit{Nota: Figura tomada de \cite{4.ppgFOTO}}}
@@ -115,7 +115,7 @@ Dimensiones                 & 15.8 Ø x 3.6 mm & 15 x 20 mm
         \includegraphics[width=\linewidth]{CHPTRS/CH04_DISEÑO/imagenes/MAX30102.png}
         \caption{Sensor MAX30102}
         \label{fig:4.MAX30102}
-        \caption*{\textit{Nota: Figura tomada de \cite{4.max}}}
+        \caption*{\textit{Figura tomada de \cite{4.max}}}
         
     \end{subfigure}
     \hfill
@@ -127,7 +127,7 @@ Dimensiones                 & 15.8 Ø x 3.6 mm & 15 x 20 mm
         \includegraphics[width=\linewidth]{CHPTRS/CH04_DISEÑO/imagenes/SensorHW-827.png}
         \caption{Sensor HW-827}
         \label{fig:4.HW}
-        \caption*{\textit{Nota: Figura tomada de \cite{4.hw-827}}}
+        \caption*{\textit{Figura tomada de \cite{4.hw-827}}}
         
     \end{subfigure}
     \caption{Sensores de frecuencia cardíaca considerados}
@@ -277,7 +277,7 @@ Dimensiones                                     & 36mm x 17mm x 7mm
     \caption*{\textit{Nota: Figura tomada de \cite{4.regulador}}}
     \end{figure}
 
-En la Figura~\ref{fig:4.eficiencia} se muestra la gráfica Eficiencia vs Corriente de salida del regulador, aunque si bien es para un voltaje de entrada de 5 V un voltaje de salida de 12 V, nos permite tener como referencia una eficiencia aproximada de 92.5\%, ya que la hoja de datos no brinda información exacta de eficiencia para el caso de este trabajo. Asimismo, si bien en la Tabla~\ref{tab:4.Consumo corrientes} se muestra un consumo máximo de 200 mA, se tiene que tener en cuenta que el motor no se encontrará siempre encendido, ya que se busca que este solo se active en caso de retroalimentación con una duración de 1 segundo. Por ello, se optó por hacer el cálculo de corriente necesaria en la batería, considerando 120 mA. Además, la corriente de entrada del regulador se calcula en base la Ecuación~\ref{ec:4.regu}.
+En la Figura~\ref{fig:4.eficiencia} se muestra la gráfica Eficiencia vs Corriente de salida del regulador, aunque si bien es para un voltaje de entrada de 5 V un voltaje de salida de 12 V, nos permite tener como referencia una eficiencia aproximada de 92.5\%, ya que la hoja de datos no brinda información exacta de eficiencia para el caso de este trabajo. Asimismo, si bien en la Tabla~\ref{tab:4.Consumo corrientes} se muestra un consumo máximo de 200 mA, se tiene que tener en cuenta que el motor no se encontrará siempre encendido, ya que se busca que este solo se active en caso de retroalimentación con una duración de 300 milisegundos. Por ello, se optó por hacer el cálculo de corriente necesaria en la batería, considerando 120 mA. Además, la corriente de entrada del regulador se calcula en base la Ecuación~\ref{ec:4.regu}.
 \begin{align}
 \label{ec:4.regu}
 I_{IN} &= \frac{I_{OUT}* V_{OUT}}{0.925* V_{IN}} 
@@ -314,6 +314,18 @@ donde $I_{tot}$ corresponde a la corriente calculada previamente de 175.3 mA y $
     \label{fig:4.bateria}
     \captionsetup{justification=centering,margin=1cm}
     \caption*{\textit{Nota: Figura tomada de \cite{4.bateria}}}
+    \end{figure}
+
+\subsection{Switch de encendido}
+El switch que se ha decidido emplear en el presente trabajo es uno de tipo botón que cuenta con enganche (ver Figura~\ref{fig:4.boton}), ya que este permitirá con facilidad que el usuario pueda identificar cuando esta encendido y cuando apagado. Asimismo, cuenta con una alta disponibilidad adecuada, es compacto y sus características facilitan su integración, ya que este soporta una corriente de 0.3 amperios a 30 voltios. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.25\textwidth]{CHPTRS/CH04_DISEÑO/imagenes/boton.png}
+    \caption{Switch tipo botón}
+    \label{fig:4.boton}
+    \captionsetup{justification=centering,margin=1cm}
+    \caption*{\textit{Nota: Figura tomada de \cite{4.boton}}}
     \end{figure}
 
 
