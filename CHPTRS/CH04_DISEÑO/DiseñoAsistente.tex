@@ -547,20 +547,20 @@ Para poder seleccionar el material de la correa, es necesario realizar algunos c
 Asimismo, a través de la selección de componentes se ha determinado unas dimensiones máximas de 60x40x30 mm. Considerando que la carcasa tenga un peso aproximado de 30 gramos, se tiene una masa de 0.0751 kg en total y a través de la Ecuación~\ref{ec:4.Finerciasl} se puede hallar la fuerza inercial producto del movimiento que realice el usuario.
 \begin{align}
 \label{ec:4.Finerciasl}
-F=m*a
+F=m\,a\,\,\,[\si{\newton}]
 \end{align}
-De esta manera, se tiene una fuerza de 0.404 N. Ahora, se debe tener en cuenta la fuerza de fricción para evitar el deslizamiento del asistente, la cual debe ser mayor que la fuerza calculada previamente. La fuerza de fricción se obtiene mediante la Ecuación~\ref{ec:4.Ffircvcion}, donde $p$, $\mu$ y $A_c$ corresponden a la presión en el brazo, al coeficiente de fricción y el área de contacto entre correa y la piel respectivamente.
+De esta manera, se tiene una fuerza $F =0.404\,N$. Ahora, se debe tener en cuenta la fuerza de fricción para evitar el deslizamiento del asistente, la cual debe ser mayor que la fuerza calculada previamente. La fuerza de fricción se obtiene mediante la Ecuación~\ref{ec:4.Ffircvcion}, donde $p$, $\mu$ y $A_c$ corresponden a la presión en el brazo, al coeficiente de fricción y el área de contacto entre correa y la piel respectivamente.
 \begin{align}
 \label{ec:4.Ffircvcion}
 F_{fric}=p*\mu*A_c
 \end{align}
-Al tener en cuenta la relación que la fuerza de fricción tiene que ser mayor que la fuerza de inercia y despejar la presión se obtiene la Ecuación~\ref{ec:4.presionl}, donde $\mu$ depende del material de la correa y para $A_c$ se ha determinado que sea 9000 $mm^2$ con un ancho de 30 mm con una longitud efectiva de 300 mm aproximadamente.
+Al tener en cuenta la relación que la fuerza de fricción tiene que ser mayor que la fuerza de inercia y despejar la presión se obtiene la Ecuación~\ref{ec:4.presionl}, donde la fricción $\mu$ depende del material de la correa y se toma un área de contacto $A_c =  \SI{9000}{\milli\meter^2} $ con un ancho de 30 mm con una longitud efectiva de 300 mm aproximadamente.
 \begin{align}
 \label{ec:4.presionl}
-p>\frac{F_{iner}}{\mu*A_c}
+p>\frac{F_{iner}}{\mu\,A_c} \quad\Rightarrow\quad \mu>\frac{F_{iner}}{p\,A_c}
 \end{align}
 
-Según \textcite{4.presion}, para que una persona no sienta incomodidad o restricción del flujo sanguíneo por la presión, se tiene un rango de 20 a 30 mmHg. En este caso se ha seleccionado a 25 mmHg como presión máxima, la cual ha conversión equivale a  3333.06 pascales. Asimismo, despejando el coeficiente de fricción y reemplazado con los valores mencionados previamente, se puede determinar el coeficiente de fricción mínimo que se tiene para evitar deslizamiento y asegurar confort (ver Ecuación~\ref{ec:4.mumin}).
+Según \textcite{4.presion}, para que una persona no sienta incomodidad o restricción del flujo sanguíneo por la presión, se tiene un rango de 20 a 30 mmHg. En este caso se ha seleccionado a 25 mmHg como presión máxima, la cual ha conversión equivale a  $3333.06 \approx \SI{3333}{\pascal}  $. Asimismo, despejando el coeficiente de fricción $\mu$ y reemplazado con los valores $F =0.404\,N$, $A_c =  \SI{9000}{\milli\meter^2}$ y $p =  \SI{3333}{\pascal}$, se puede determinar el coeficiente de fricción mínimo que se tiene para evitar deslizamiento y asegurar confort (ver Ecuación~\ref{ec:4.mumin}).
 \begin{align}
 \label{ec:4.mumin}
 \mu_{min}>0.01346*FS
