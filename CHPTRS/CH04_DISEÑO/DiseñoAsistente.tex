@@ -227,17 +227,29 @@ Peso              & Mínimo posible   & 1g                & -           & 6g    
 Por otro lado, considerando que el motor estará conectado al microcontrolador y será activado mediante PWM, el ESP32 no puede suministrar corrientes altas por sus pines GPIO (máximo 40mA por pin). Por ello, es necesario realizar un circuito de protección o driver simple con un transistor NPN que permita proteger al microcontrolador y controlar al motor de manera segura (Figura~\ref{fig:4.motorproteccion}) y que no ocupe un tamaño considerable de espacio. Para ello, la base del transistor se conecta al pin PWM del microcontrolador mediante una resistencia que limita la corriente de base para proteger el GPIO. El transistor maneja la corriente del motor hacia tierra, mientras que se alimenta desde el pin 3.3V. Además, se coloca un diodo, en paralelo y polaridad opuesta al motor, para absorber los picos inducidos por el motor al apagarse, protegiendo al transistor y al resto del circuito.\\
  \begin{figure}[H]
     \centering
-    \includegraphics[width=0.4\textwidth]{CHPTRS/CH04_DISEÑO/imagenes/Proteccion motor.png}
+    \includegraphics[width=0.5\textwidth]{CHPTRS/CH04_DISEÑO/imagenes/Proteccion motor.png}
     \caption{Circuito de protección del motor}
     \label{fig:4.motorproteccion}
     \captionsetup{justification=centering,margin=1cm}
    % \caption*{\textit{Nota: Figura tomada de \cite{4.motor}}}
     \end{figure}
 
-El transistor seleccionado es el 2N2222a que cuenta con una $V_{BE(sat)}$ de 1.2V, así como se sabe que la corriente del conector($I_C$) es 80mA por parte del motor y utilizando un $\beta=Ic/Ib$ igual a 10, se tiene que la corriente de la base ($I_B$) es igual a 8mA y que el voltaje que es emitido desde el microcontrolador es de 3.3V.A través de la Ecuación se halla el valor de la resistencia R1 que es de $262.5\Omega$, eligiendo el valor comercial más próximo de $270\Omega$.
+El transistor seleccionado es el 2N3904 que cuenta con una $V_{CE(sat)}$ de 0.3V, una ganancia $h_{FE}$ de 200 en promedio, un $V_{BE(sat)}$ de 0.95V maximo según su hoja de datos. Asimismo, como se sabe que la corriente del conector($I_C$) es 80mA por parte del motor y utilizando la relación $I_C=h_{FE}\,I_B$, con $h_{FE} = 200$ se obtiene que la corriente de la base ($I_{B0}$) es igual a 0.4mA. Adicionalmente, conocienco  el voltaje que es emitido desde el microcontrolador es de 3.3V, se utiliza la Ecuación~\ref{ec:4.motor} para hallar el valor de la resistencia R1 que es de $5.875\,k\Omega$, eligiendo el valor comercial más próximo de $5.6\,k\Omega$.
 \begin{align}
 \label{ec:4.motor}
-R1=\frac{V_{GPIO}-V_{BE(sat)}}{I_B}
+R1=\frac{V_{GPIO}-V_{BE(sat)}}{I_{B0}}\,\,\,\text{[\si{\ohm}]}
+\end{align}
+
+Adicionalmente, al colocar $R1 = 5.6\,k\text{\si{\ohm}}$, se obtiene una corriente $I_{B}$ distinta a la calculada previamente. Esta se halla mediante la Ecuación~\ref{ec:4.motorcorrientIB}, obteniendo como resultado $I_{B1} = 0.42\,\si{\milli\ampere}$
+\begin{align}
+\label{ec:4.motorcorrientIB}
+I_B=\frac{V_{GPIO}-V_{BE(sat)}}{R1}\,\,\,\text{[\si{\ampere}]}
+\end{align}
+
+Finalmente, se ha colocado la resistencia $R2 = 47\,k\text{\si{\ohm}}$ de protección, para asegurar la llegada de solo $0.4\, \si{\milli\ampere}$ al transistor, colocado en paralelo a Base-Emisor, obtenido mediante la Ecuación~\ref{ec:4.motorR2}.
+\begin{align}
+\label{ec:4.motorR2}
+R2=\frac{V_{BE}}{I_{B1}-I_{B0}}\,\,\,\text{[\si{\ohm}]}
 \end{align}
 
 \subsection{Módulo de carga}
@@ -544,30 +556,30 @@ Para poder seleccionar el material de la correa, es necesario realizar algunos c
     \hline
     \end{tabular}
     \end{table}
-Asimismo, a través de la selección de componentes se ha determinado unas dimensiones máximas de 60x40x30 mm. Considerando que la carcasa tenga un peso aproximado de 30 gramos, se tiene una masa de 0.0751 kg en total y a través de la Ecuación~\ref{ec:4.Finerciasl} se puede hallar la fuerza inercial producto del movimiento que realice el usuario.
+Asimismo, a través de la selección de componentes se ha determinado unas dimensiones máximas de 65x45x30 mm. Considerando que la carcasa tenga un peso aproximado de 30 gramos, se tiene una masa de $0,0751 \,kg$ en total y a través de la Ecuación~\ref{ec:4.Finerciasl} se puede hallar la fuerza inercial producto del movimiento que realice el usuario.
 \begin{align}
 \label{ec:4.Finerciasl}
 F=m\,a\,\,\,[\si{\newton}]
 \end{align}
-De esta manera, se tiene una fuerza $F =0.404\,N$. Ahora, se debe tener en cuenta la fuerza de fricción para evitar el deslizamiento del asistente, la cual debe ser mayor que la fuerza calculada previamente. La fuerza de fricción se obtiene mediante la Ecuación~\ref{ec:4.Ffircvcion}, donde $p$, $\mu$ y $A_c$ corresponden a la presión en el brazo, al coeficiente de fricción y el área de contacto entre correa y la piel respectivamente.
+De esta manera, se tiene una fuerza $F_1 =0.404\,N$. Ahora, se debe tener en cuenta la fuerza de fricción para evitar el deslizamiento del asistente, la cual debe ser mayor que la fuerza calculada previamente. La fuerza de fricción se obtiene mediante la Ecuación~\ref{ec:4.Ffircvcion}, donde  se multiplica la presión en el brazo $(p)$, el coeficiente de fricción $(\mu)$ y el área de contacto entre correa y la piel $(A_c)$.
 \begin{align}
 \label{ec:4.Ffircvcion}
-F_{fric}=p*\mu*A_c
+F_{fric}=p\,\mu \,A_c \,\,\,[\si{\newton}]
 \end{align}
-Al tener en cuenta la relación que la fuerza de fricción tiene que ser mayor que la fuerza de inercia y despejar la presión se obtiene la Ecuación~\ref{ec:4.presionl}, donde la fricción $\mu$ depende del material de la correa y se toma un área de contacto $A_c =  \SI{9000}{\milli\meter^2} $ con un ancho de 30 mm con una longitud efectiva de 300 mm aproximadamente.
+Al tener en cuenta la relación que la fuerza de fricción tiene que ser mayor que la fuerza de inercia y despejar la presión se obtiene la Ecuación~\ref{ec:4.presionl}, donde la fricción $\mu$ depende del material de la correa y se toma un área de contacto $A_c =  \SI{6000}{\milli\meter^2} $ con un ancho de $\SI{20}{\milli\meter}$ con una longitud efectiva de $\SI{300}{\milli\meter}$ aproximadamente.
 \begin{align}
 \label{ec:4.presionl}
 p>\frac{F_{iner}}{\mu\,A_c} \quad\Rightarrow\quad \mu>\frac{F_{iner}}{p\,A_c}
 \end{align}
 
-Según \textcite{4.presion}, para que una persona no sienta incomodidad o restricción del flujo sanguíneo por la presión, se tiene un rango de 20 a 30 mmHg. En este caso se ha seleccionado a 25 mmHg como presión máxima, la cual ha conversión equivale a  $3333.06 \approx \SI{3333}{\pascal}  $. Asimismo, despejando el coeficiente de fricción $\mu$ y reemplazado con los valores $F =0.404\,N$, $A_c =  \SI{9000}{\milli\meter^2}$ y $p =  \SI{3333}{\pascal}$, se puede determinar el coeficiente de fricción mínimo que se tiene para evitar deslizamiento y asegurar confort (ver Ecuación~\ref{ec:4.mumin}).
+Según \textcite{4.presion}, para que una persona no sienta incomodidad o restricción del flujo sanguíneo por la presión, se tiene un rango de 20 a 30 mmHg. En este caso se ha seleccionado a 25 mmHg como presión máxima, la cual ha conversión equivale a  $3333.06 \approx \SI{3333}{\pascal}  $. Asimismo, despejando el coeficiente de fricción $\mu$ y reemplazado con los valores $F_{iner} = F_1=0.404\,N$, $A_c =  \SI{6000}{\milli\meter^2}$ y $p =  \SI{3333}{\pascal}$, se puede determinar el coeficiente de fricción mínimo que se tiene para evitar deslizamiento y asegurar confort (ver Ecuación~\ref{ec:4.mumin}).
 \begin{align}
 \label{ec:4.mumin}
-\mu_{min}>0.01346*FS
+\mu_{min}>0.0202\,FS
 \end{align}
 
-Al multiplicar por el factor de seguridad, se termina con un coeficiente de fricción mínimo de 0.02692, lo cual al ser muy pequeño, nos permite una gran posibilidad de materiales de correa. En un estudio realizado por \textcite{4.correas}, se indica que el coeficiente de fricción en la piel es de un promedio de 0.46
-$\pm$0.15, siendo la silicona el material con un mayor coeficiente (0.6) y el nylon es aquel que cuenta con menor coeficiente de fricción (0.37). Sin embargo, en el presente trabajo se optó por utilizar nylon debido a su disponibilidad y ha sido utilizado previamente en dispositivos deportivos, lo cual asegura confort para el usuario.
+Al multiplicar por el factor de seguridad, se termina con un coeficiente de fricción mínimo de $\mu =0,0404$, lo cual al ser muy pequeño, nos permite una gran posibilidad de materiales de correa. En un estudio realizado por \textcite{4.correas}, se indica que el coeficiente de fricción en la piel es de un promedio de
+$0,46\,\pm\,0,154$, siendo la silicona el material con un mayor coeficiente (0,6) y el nylon es aquel que cuenta con menor coeficiente de fricción (0,37). Sin embargo, en el presente trabajo se optó por utilizar nylon debido a su disponibilidad y ha sido utilizado previamente en dispositivos deportivos, lo cual asegura confort para el usuario.
 
 
 \subsection{Selección del material de carcasa}
@@ -591,12 +603,131 @@ Temperatura de deformación & 80°C      & 105°C
 \end{tblr}
 \end{table}
 
-\subsubsection{Modelado de la carcasa}
-\subsubsection{Plano de ensamble carcasa}
+\subsection{Modelado de la carcasa}
 
+En la Figura~\ref{fig:4.modelado} se puede observar la figura del modelado 3D del asistente, este tiene unas dimensiones finales 65 x 45 x 29.5 milímetros. A continuación se detallará las uniones con los diversos componentes.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{CHPTRS/CH04_DISEÑO/imagenes/imag_3d/ensamble.png}
+    \caption{Modelado 3D del asistente}
+    \label{fig:4.modelado}
+    \captionsetup{justification=centering,margin=1cm}
+    \end{figure}
+\subsubsection{Parte superior de la Carcasa}
+En la siguiente Figura~\ref{fig:4.modeladoSUPERIOR} se puede apreciar la parte superior de la carcasa. Esta cuenta con un orificio donde estará colocado la batería por inserción, de manera que también se pueda retirar de manera sencilla en caso de mantenimiento. Sin embargo, cuenta con una barra de material que sirve de inserción con la parte inferior de la carcasa por motivos solo de prototipado, ya que la unión entre estas debe ser mediante pegamento.
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{CHPTRS/CH04_DISEÑO/imagenes/imag_3d/superior.png}
+    \caption{Modelado parte superior de la carcasa}
+    \label{fig:4.modeladoSUPERIOR}
+    \captionsetup{justification=centering,margin=1cm}
+    \end{figure}
+
+\subsubsection{Parte inferior de la Carcasa}
+La Figura~\ref{fig:4.modeladoBase} muestra la parte inferior de la carcasa. En ella se puede observar que tiene orificios circulares en las caras laterales para ventilación y cuenta con todos los bordes bordeados para protección, ya que la parte baja de esta base estará en contacto directo con la piel del usuario.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{CHPTRS/CH04_DISEÑO/imagenes/imag_3d/Base.png}
+    \caption{Modelado parte Inferior de la carcasa}
+    \label{fig:4.modeladoBase}
+    \captionsetup{justification=centering,margin=1cm}
+    \end{figure}
+
+Asimismo, tiene espacios donde se colocará el sensor MAX30102 y el motor de vibración que serán colocados por encaje a presión. Asimismo, tiene una caja donde será colocada la barra de inserción de la parte superior, como se mencionó previamente, este es solo para prototipado, ya que ambas partes irán pegadas. 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{CHPTRS/CH04_DISEÑO/imagenes/imag_3d/Base_MOTOR_sENSOR.png}
+    \caption{Encajes de presión para el sensor MAX3012 y el motor de vibración}
+    \label{fig:4.modeladoBase}
+    \captionsetup{justification=centering,margin=1cm}
+    \end{figure}
+
+Además, cuenta con un espacio para que el usuario pueda insertar el conector de tipo C para poder recargar el asistente a través del módulo TP4056 y un agujero donde está colocado el botón de encendido y apagado por presión (ver Figuras~\ref{fig:4.BaseUSB} y~\ref{fig:4.BaseBOTON} respectivamente).
+\begin{figure}[H]
+    \centering
+    % Primera imagen
+    \begin{subfigure}{0.4\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{CHPTRS/CH04_DISEÑO/imagenes/imag_3d/ensamble_usb.png}
+        \caption{Espacio para la carga del asistente}
+        \label{fig:4.BaseUSB}
+        
+    \end{subfigure}
+    \hfill
+    % Segunda imagen
+    \begin{subfigure}{0.32\textwidth}
+       
+
+        \centering
+        \includegraphics[width=\linewidth]{CHPTRS/CH04_DISEÑO/imagenes/imag_3d/ensamble_boton.png}
+        \caption{Espacio para el botón del asistente}
+        \label{fig:4.BaseBOTON}
+        
+    \end{subfigure}
+    \caption{Espacios para el cargador y el botón}
+
+\end{figure}
+
+\subsection{Sujeción de correa}
+En la carcasa se tienen barras circulares en ambos lados como se puede apreciar en la Figura~\ref{fig:4.cilindros}. Estas serán las encargadas de sujetar la correa y para determinar el diámetro del cilindro se consideró una longitud $L_1 =23\,mm$ fuerza de tensión $F_1=40\,\si{\newton}$. Esta se tuvo como aproximación en base a un estudio realizado por , donde determinaron que se utilizaban tensiones de entre 20 y 60 \si{\newton} en las correas para un tratamiento de escoliosis; sin embargo, en este caso no se busca realizar un tratamiento de ajuste y se decidió optar por el valor promedio de este estudio.\\
+
+A través de la Ecuación~\ref{ec:mmax} para sistemas empotrados  se determino el momento flector máximo $M_{max}=115 \,\si{\newton}.mm $ que soporta la barra circular empotrada en ambos lados. Posteriormente se utilizó la Ecuación~\ref{ec:diametro}, la cual fue despejado en base a las propiedades de una barra circular para poder determinar el diámetro mínimo que necesita tener el cilindro.
+
+\begin{align}
+\label{ec:mmax}
+M_{max}= \frac{F_1\,L_1}{8}\,\,\,[\si{\newton}.mm]
+\end{align}
+
+\begin{align}
+\label{ec:diametro}
+\sigma = \frac{M_{\text{max}}\,c}{I} 
+\quad\Rightarrow\quad 
+d_{min}^3 > \frac{32\,M_{\text{max}}}{\pi\,\sigma}
+\end{align}
+
+De esta manera, considerando que el material tiene una resistencia de $\sigma = 50\,M\si{\pascal}$ (ver Tabla~\ref{tab:4.Caracteristicas materiales}) y reemplazando el valor de $M_{max}=115 \,\si{\newton}.mm $ se obtiene un diámetro mínimo $d_{min}= 2.86\,\si{\milli\meter} $. En el caso de la carcasa, se ha seleccionado un diámetro de 4 mm con un factor de seguridad de 1,39 aproximadamente.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{CHPTRS/CH04_DISEÑO/imagenes/imag_3d/Base_cilindro.png}
+    \caption{Barra de sujeción}
+    \label{fig:4.cilindros}
+    \captionsetup{justification=centering,margin=1cm}
+    \end{figure}
+\subsection{Sujeción de tarjeta electrónica}
+Para la sujeción de la tarjeta electrónica, se han colocado 4 agujeros roscados en los extremos de la carcasa como el que se encuentra en la Figura\ref{fig:4.agujero}. Estas cuentan con una rosca M2x0.25 con una profundidad de 3mm para poder colocar los tornillos M2x4 (ver Figura~\ref{fig:4.tornillo}, considerando que solo soportaran el peso de unos 50 gramos aproximadamente. No hay ningún inconveniente con utilizar estos tornillos.
+
+\begin{figure}[H]
+    \centering
+    % Primera imagen
+    \begin{subfigure}{0.5\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{CHPTRS/CH04_DISEÑO/imagenes/imag_3d/Base_agujero.png}
+        \caption{Agujero de sujeción}
+        \label{fig:4.agujero}
+        
+    \end{subfigure}
+    \hfill
+    % Segunda imagen
+    \begin{subfigure}{0.32\textwidth}
+       
+
+        \centering
+        \includegraphics[width=0.8\linewidth]{CHPTRS/CH04_DISEÑO/imagenes/imag_3d/tornillo.png}
+        \caption{Tornillo de sujeción}
+        \label{fig:4.tornillo}
+        
+    \end{subfigure}
+    \caption{Sujeción de tarjeta electrónica}
+
+\end{figure}
 \section{Diseño del software}
 \subsection{Sistema}
 \subsection{Aplicativo}
 
-
+\section{Costos}
 \section{Simulaciones}
