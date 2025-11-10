@@ -290,27 +290,24 @@ Dimensiones                                    & 27.7 x 17 mm
     \end{figure}
 
  \subsection{Regulador de voltaje}
- Para seleccionar el regulador de voltaje es necesario saber la corriente de consumo del asistente. En la Tabla~\ref{tab:4.Consumo corrientes} se muestra la corriente de consumo de los componentes del circuito electrónico. Sin embargo, el módulo ESP32 seleccionado cuenta con una salida de 3.3 V en uno de sus pines. Por lo tanto, se optará por utilizar ese para la alimentación del motor y del sensor de frecuencia cardíaca.
+ Para seleccionar los reguladores de voltaje es necesario saber la corriente de consumo del asistente. En la Tabla~\ref{tab:4.Consumo corrientes} se muestra la potencia de consumo de los componentes del circuito electrónico. A través de estos datos se podrá determinar el regulador de voltaje \textit{Step-Up} para el microcontrolador y el regulador \textit{Step-Down} para el motor y sensor
  
- \begin{table}[H]
+\begin{table}[H]
 \centering
-\caption{Consumo de corriente del circuito electrónico}
+\caption{Consumo de potencia  del circuito electrónico}
 \label{tab:4.Consumo corrientes}
 \begin{tblr}{
-  width = \linewidth,
-  colspec = {X[c,m] X[c,m]},
-  row{even} = {c},
-  row{3} = {c},
-  row{5} = {c},
-  cell{1}{1} = {c},
+  column{1} = {c},
+  column{2} = {c},
+  cell{5}{1} = {c=3}{},
   hlines,
   vlines,
 }
-Componente         & Corriente de uso \\
-Módulo ESP32 (BLE)       & 100 mA~          \\
-Sensor MAX30101    & 20mA             \\
-Motor de vibración & 80mA             \\
-Total              & 200mA            
+Componente         & Corriente de uso & Voltaje & Potencia \\
+Módulo ESP32 (BLE) & 100 mA~          & ~5 V    & 500 mW   \\
+Sensor MAX30101    & 20mA             & 3.3 V   & 66mW     \\
+Motor de vibración & 80mA             & 3.3 V   & 264mW    \\
+Total              &                  &         & 830mW    
 \end{tblr}
 \end{table}
 
@@ -730,4 +727,67 @@ Para la sujeción de la tarjeta electrónica, se han colocado 4 agujeros roscado
 \subsection{Aplicativo}
 
 \section{Costos}
+En esta sección se presentan los costos para el desarrollo del asistente. Asimismo, se debe recalcar que el diseño del asistente se baso en componentes disponibles localmente.
+\subsection{Costo de diseño eléctrico}
+En la tabla~\ref{tab:4.Costo componentes}, se muestra la estimación de los costos de los componentes electrónicos que se utilizan en el diseño electrónico del dispositivo.
+
+\begin{table}[H]
+\centering
+\caption{Costo de componentes electrónicos}
+\label{tab:4.Costo componentes}
+\begin{tabular}{|c|c|c|c|c|} 
+\hline
+Componente                  & Proveedor         & Precio Unitario (S/.) & Cantidad & Precio Total  \\ 
+\hline
+Módulo ESP32                & Electromanía      & S/.38               & 1        & S/.38     \\ 
+\hline
+Sensor MAX30102             & Electromanía      & S/.20                 & 1        & S/.20         \\ 
+\hline
+Regulador de voltaje MT3608 & Electromanía      & ~S/.5                 & 1        & S/.5          \\ 
+\hline
+Regulador de voltaje MP1584 & Hi-FI electrónica & S/.3.90               & 1        & S/.3.90       \\ 
+\hline
+Motor de Vibración          & Hi-FI electrónica & S/.1.70               & 1        & S/.1.70       \\ 
+\hline
+Modulo de Carga~ HW373      & SAISAC            & S/.4                  & 1        & S/.4          \\ 
+\hline
+Batería de Litio 1000mAh    & HI-Fi electrónica & S/.11.30              & 1        & S/.11.30      \\ 
+\hline
+Botón de encendido          & Hi-Fi electrónica & S/.0.80               & 1        & S/.0.80       \\ 
+\hline
+Transistor 2N3904           & Hi-Fi electrónica & S/.0.20               & 1        & S/.0.20       \\ 
+\hline
+PCB                         &           PCB Perú        & S/.25                   & 1        & S/.25           \\ 
+\hline
+\multicolumn{4}{|c|}{Total}                                                        &     S/.109.90          \\
+\hline
+\end{tabular}
+\end{table}
+\subsection{Costo de componentes y materiales para diseño mecánico}
+
+En esta sección se detallan las estimaciones de costos de fabricación de la carcasa y la correa. En la Tabla~\ref{tab:4.Costo carcasa} se muestra los costos de fabricación de la carcasa tanto de la parte inferior como de la parte superior. La cotización pertenece a 3Dprint.pe.
+
+\begin{table}[H]
+\centering
+\caption{Costo de Fabricación de carcasa}
+\label{tab:4.Costo carcasa}
+\begin{tabular}{|c|c|c|} 
+\hline
+Componente                  & Cantidad & Precio Total  \\ 
+\hline
+Carcasa-Parte inferior-PETG & 1        & S/.34         \\ 
+\hline
+Carcasa-Parte superior-PETG & 1        & S/.18         \\ 
+\hline
+\multicolumn{2}{|c|}{Total}            & S/.52         \\
+\hline
+\end{tabular}
+\end{table}
+
+
+
+\subsection{Costo total}
+
+
+
 \section{Simulaciones}
