@@ -1,8 +1,8 @@
 % Conclusiones y Observaciones PARA TFC1
 
-\chapter{Conclusiones y observaciones}
-\ihead[]{Capítulo 5: Conclusiones y observaciones}
-\section{Observaciones}
+\chapter{Conclusiones y Recomendaciones}
+\ihead[]{Capítulo 5: Conclusiones y Recomendaciones}
+\section{Recomendaciones}
 %%%%%%% OBSERVACIONES TFC1 %%%%%%%
 %\begin{itemize}
  %   \item Al momento de realizar el análisis de los requerimientos se identificó que, debido a la portabilidad y comodidad necesarias, la integración de los componentes debe priorizar soluciones compactas y de bajo consumo, lo cual limita  el espacio disponible considerablemente, sobretodo en el concepto solución con forma de anillo.
@@ -10,7 +10,12 @@
    % \item Durante la investigación del estado del arte, solo se identificó un dispositivo con el mismo propósito de la tesis propuesta de combatir la desconcentración. El análisis de este permitió explorar otras configuraciones posibles para el asistente así como alternativas en cuanto a retroalimentación.
 %\end{itemize}
 %%%%%%% OBSERVACIONES TFC1 %%%%%%%
-
+\begin{itemize}
+    \item El desarrolló del asistente se basó en componentes que sean disponibles localmente, obteniendo un dispositivo con dimensiones máximas de 65x45x29.5 mm. Por ello, se recomienda explorar componentes extranjeros que permitan optimizar el tamaño del asistente de manera que aumente la portabilidad, como los reguladores Pololu mencionados en la selección de componentes. Asimismo, se debe tener en cuenta que no aumenten demasiado el costo del asistente.
+    \item La clasificación de los estados de concentración se encuentra basada en umbrales. Por ello, se recomienda construir una base de datos con registros de una mayor cantidad de estudiantes en sus sesiones de estudio. En base a esta, desarrollar un modelo de aprendizaje automático que permita incrementar la robustez de la clasificación.
+    \item Si bien se desarrolló un aplicativo con las pantallas correspondientes mediante Flutter, se recomienda contactar con algún especialista en diseño de interfaces (UI/UX) que permita optimizar la experiencia del usuario. Asimismo, se recomienda realizar encuestas o pruebaas de usabilidad con universitarios para determinar que gráficas desea visualizar el usuario.
+    \item Se recomienda realizar pruebas experimentales con una muestra más amplia de estudiantes, evaluando su progreso en conjunto con profesionales de psicología. Esto permitirá fortalecer la validación del asistente y analizar con mayor profundida su impacto en el proceso de autorregulación de la atención.
+\end{itemize}
 
 \section{Conclusiones}
 %%%%%%% CONCLUSIONES TFC1 %%%%%%%
@@ -21,5 +26,12 @@
    % \item La aplicación de la metodología VDI 2225, mediante la matriz morfológica y la evaluación técnico-económica, permitió comparar objetivamente las posibles configuraciones del asistente, seleccionando la banda braquial como concepto de solución óptimo a pesar de que se tenia cierta preferencia por el anillo desde el inicio del desarrollo de la tesis.
     %\item El desarrollo de diagramas de flujo, máquina de estado general y bosquejo de los conceptos ha permitido visualizar de manera clara el funcionamiento esperado del sistema, sirviendo como base sólida para la siguiente etapa de la tesis, donde se abordará el diseño detallado y la validación técnica.
 %\end{itemize}
-
+\begin{itemize}
+    \item El análisis de la problemática del déficit de atención en estudiantes universitarios permitió identificar que la ausencia de estrategias de autorregulación afectan significativamente el rendimiento académico. Asimismo, la revisión del estado del arte permitió establecer qué variables fisiológicas son viables para el asistente, seleccionando la frecuencia cardíaca por su disponibilidad tecnológica y viabilidad de medición.
+    \item El desarrollo del diseño mecánico, elaborado meidante material PETG, permitió validar el diseño de la carcasa, así como su resistencia mediante pruebas en prototipo físico mediante impresión 3D. Asimismo, el diseño cumple con la exigencia de que el asistente debe permitir un fácil montaje.
+    \item El desarrollo del circuito electrónico del sistema ha permitido identificar la capacidad para realizar dispositivos con componentes disponibles localmente que cumplan el funcionamiento deseado. Sin embargo, se identificaron limitaciones asociadas principalmente al tamaño del hardware.
+    \item El desarrollo del software del sistema ha permitido cumplir con la exigencia que corresponde a que el procesamiento básico se debe realizar localmente en el microcontrolador. Asimismo, se logró desarrollar un prototipo de interfaz móvil mediante Flutter, capaz de establecer la configuración del usuario y recibir datos del asistente mediante BLE.
+    \item Las simulaciones realizadas han permito demostrar que es posible detectar el nivel de concentración a partir de la señal capturada y activar retroalimentación háptica ante distracciones. Aunque no se realizó una validación clínica, los resultados muestran coherencia con investigaciones previas sobre frecuencia cardíaca y atención. 
+    \item Determinar el costo de materiales demuestra que es posible desarrollar un asistente portátil, funcional y de bajo costo comparado con alternativas comerciales.
+\end{itemize}
 %%%%%%% CONCLUSIONES TFC1 %%%%%%%

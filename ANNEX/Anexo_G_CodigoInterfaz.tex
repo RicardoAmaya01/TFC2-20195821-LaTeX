@@ -1,0 +1,1048 @@
+En esta sección se encuentran los códigos que corresponden exclusivamente a las pantallas principales del aplicativo. En caso de necesitar acceso completo al proyecto  Flutter, acceder al \href{https://github.com/Raac01/TFC2-20195821-SW.git}{repositorio}.
+\begin{itemize}
+    \item Main: 
+    \begin{minted}{dart}
+import 'package:flutter/material.dart';
+import 'utils/colors.dart';
+import 'screens/start_screen.dart';
+import 'screens/home_screen.dart';
+import 'screens/session_screen.dart';
+import 'screens/history_screen.dart';
+import 'screens/config_screen.dart';
+import 'screens/training_screen.dart';
+import 'dart:convert';
+import 'services/database.dart';
+import 'models/session.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();   // DB
+  runApp(const AsistenteApp());
+}
+
+class AsistenteApp extends StatelessWidget {
+  const AsistenteApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Asistente Cognitivo',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        scaffoldBackgroundColor: AppColors.background,
+        appBarTheme: const AppBarTheme(
+          backgroundColor: AppColors.primary,
+          foregroundColor: Colors.white,
+          elevation: 2,
+        ),
+        colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primary),
+        useMaterial3: true,
+      ),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const StartScreen(),
+        '/training': (context) => const TrainingScreen(),
+        '/home': (context) => const HomeScreen(),
+        '/session': (context) => const SessionScreen(),
+        '/history': (context) => const HistoryScreen(),
+        '/config': (context) => const ConfigScreen(),
+      },
+    );
+  }
+}
+    \end{minted}
+
+\item Conexión:
+\begin{minted}{dart}
+import 'package:flutter/material.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import '../utils/colors.dart';
+import '../utils/styles.dart';
+import '../services/bluetooth.dart';
+
+class StartScreen extends StatefulWidget {
+  const StartScreen({super.key});
+
+  @override
+  State<StartScreen> createState() => _StartScreenState();
+}
+
+class _StartScreenState extends State<StartScreen> {
+  bool isScanning = false;
+  String statusMessage = "";
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.background,
+
+      appBar: AppBar(
+        title: const Text(
+          "Conectar Asistente",
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: AppColors.primary,
+        automaticallyImplyLeading: false, //PANTALLA INICIAL
+      ),
+
+      body: Center(
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+
+              // TITULO PRINCIPAL GRANDE
+              Text(
+                statusMessage.isEmpty ? "Asistente Cognitivo" : statusMessage,
+                textAlign: TextAlign.center,
+                style: AppStyles.heading1.copyWith(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.primary,
+                ),
+              ),
+
+              const SizedBox(height: 40),
+
+              // IMAGEN CENTRAL
+              Image.asset(
+                "assets/images/canva.png",
+                height: 160,
+              ),
+
+              const SizedBox(height: 40),
+
+              // BOTÓN PRINCIPAL
+              ElevatedButton(
+                onPressed: isScanning ? null : _searchAndConnect,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 18,
+                      horizontal: 50
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                ),
+                child: isScanning
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : const Text(
+                  "Conectar Asistente",
+                  style: TextStyle(fontSize: 20),
+                ),
+              ),
+
+              const SizedBox(height: 30),
+
+              // BOTÓN SECUNDARIO
+              TextButton(
+                onPressed: () => Navigator.pushNamed(context, "/home"),
+                child: const Text(
+                  "Entrar al menú sin conexión",
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+ 
+// BUSCAR Y CONECTAR
+
+  Future<void> _searchAndConnect() async {
+    setState(() {
+      isScanning = true;
+      statusMessage = "Buscando el asistente...";
+    });
+
+    BluetoothDevice? deviceFound;
+
+    BLEService.instance.scanDevices().listen((scanResults) async {
+      for (var r in scanResults) {
+        if (r.device.name == BLEService.DEVICE_NAME) {
+          deviceFound = r.device;
+          break;
+        }
+      }
+
+      if (!mounted) return;
+
+      if (deviceFound != null) {
+        setState(() => statusMessage = "Asistente encontrado. Conectando..");
+
+        bool ok = await BLEService.instance.connect(deviceFound!);
+
+        if (!mounted) return;
+
+        if (ok) {
+          setState(() => statusMessage = "Conectado correctamente");
+
+          await Future.delayed(const Duration(milliseconds: 600));
+
+          Navigator.pushNamed(context, "/home"); // YA NO replacement
+        } else {
+          setState(() => statusMessage = "Error al conectar");
+        }
+
+        setState(() => isScanning = false);
+      } else {
+        setState(() {
+          isScanning = false;
+          statusMessage = "No se encontró el asistente.\nAcerque el dispositivo.";
+        });
+      }
+    });
+  }
+}
+
+
+ \end{minted}
+ \item Menú principal:
+\begin{minted}{dart}
+import 'package:flutter/material.dart';
+import '../utils/styles.dart';
+import '../utils/colors.dart';
+
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Asistente Cognitivo',
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: AppColors.primary,
+        elevation: 2,
+      ),
+
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Menú Principal', style: AppStyles.heading1),
+            const SizedBox(height: 20),
+
+            Center(
+              child: Image.asset(
+                'assets/images/canva.png',
+                height: 150,
+              ),
+            ),
+
+            const SizedBox(height: 30),
+
+            // BOTÓN 1: INICIAR SESIÓN 
+            _buildMenuCard(
+              context,
+              icon: Icons.play_circle_fill,
+              title: 'Iniciar Sesión',
+              subtitle: 'Comenzar una sesión de estudio',
+              color: AppColors.primary,
+              route: '/session',
+            ),
+
+            const SizedBox(height: 20),
+
+            //  BOTÓN 2: HISTORIAL
+            _buildMenuCard(
+              context,
+              icon: Icons.bar_chart,
+              title: 'Historial',
+              subtitle: 'Ver tus sesiones anteriores',
+              color: AppColors.secondary,
+              route: '/history',
+            ),
+
+            const SizedBox(height: 20),
+
+            //  BOTÓN 3: CONFIGURACIÓN 
+            _buildMenuCard(
+              context,
+              icon: Icons.settings,
+              title: 'Configuración',
+              subtitle: 'Ajustar la duración y parámetros',
+              color: AppColors.accent,
+              route: '/config',
+            ),
+
+            const SizedBox(height: 20),
+
+            // BOTÓN 4: VOLVER A CONECTAR
+            _buildMenuCard(
+              context,
+              icon: Icons.bluetooth_searching,
+              title: 'Volver a Conectar',
+              subtitle: 'Retornar a la pantalla de inicio',
+              color: Colors.blueGrey,
+              route: '/',
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+  
+  Widget _buildMenuCard(
+      BuildContext context, {
+        required IconData icon,
+        required String title,
+        required String subtitle,
+        required Color color,
+        required String route,
+      }) {
+    return InkWell(
+      onTap: () => Navigator.pushReplacementNamed(context, route),
+
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(18),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+
+          child: Row(
+            children: [
+              
+              CircleAvatar(
+                radius: 32,
+                backgroundColor: color.withOpacity(0.2),
+                child: Icon(
+                  icon,
+                  size: 32,
+                  color: color,
+                ),
+              ),
+
+              const SizedBox(width: 20),
+
+              // TEXTOS
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title, style: AppStyles.heading2),
+                  const SizedBox(height: 5),
+                  Text(subtitle, style: AppStyles.body),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+
+ \end{minted}
+  \item Sesión:
+\begin{minted}{dart}
+
+import 'dart:async';
+import 'dart:convert';
+import 'dart:math';
+import 'package:flutter/material.dart';
+import '../utils/colors.dart';
+import '../utils/styles.dart';
+import 'package:fl_chart/fl_chart.dart';
+import '../models/session.dart';
+import '../services/database.dart';
+import '../services/prefs.dart';
+
+class SessionScreen extends StatefulWidget {
+  const SessionScreen({super.key});
+
+  @override
+  State<SessionScreen> createState() => _SessionScreenState();
+}
+
+class _SessionScreenState extends State<SessionScreen> {
+  // Datos reales o simulados
+  int heartRate = 0;
+  String focusLevel = "–";
+
+  // Configuración del usuario
+  final SettingsService settings = SettingsService();
+
+  // Timer
+  int secondsRemaining = 0;
+  int initialSeconds = 0;
+  Timer? timer;
+
+  // Simulación
+  final Random rand = Random();
+
+  // Gráfico HR
+  List<FlSpot> hrData = [];
+  double elapsed = 0;
+
+  // Timeline de concentración
+  List<String> focusTimeline = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSessionDuration();
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
+  }
+
+  
+  // CARGAR TIEMPO CONFIGURADO DESDE AJUSTES
+  
+  Future<void> _loadSessionDuration() async {
+    int minutes = await settings.getSessionDuration();
+    setState(() {
+      secondsRemaining = minutes * 60;
+      initialSeconds = minutes * 60;
+    });
+
+    _startTimer();
+  }
+
+  
+  
+  // SIMULACIÓN
+  void _startTimer() {
+    timer = Timer.periodic(const Duration(seconds: 1), (t) {
+      if (secondsRemaining > 0) {
+        
+        // SIMULACIÓN DE HR
+       
+        heartRate = 70 + rand.nextInt(50);
+
+     
+        // SIMULACIÓN DE CONCENTRACIÓN
+       
+        focusLevel = rand.nextBool() ? "alta" : "baja";
+        focusTimeline.add(focusLevel);
+
+        
+        // ACTUALIZAR GRÁFICA
+        
+        elapsed += 1;
+
+        if (hrData.isEmpty) {
+          // Punto inicial para evitar gráfica vacía
+          hrData.add(const FlSpot(0, 80));
+        }
+
+        if (elapsed <= 60) {
+          hrData.add(FlSpot(elapsed, heartRate.toDouble()));
+        } else {
+          // Ventana deslizante de 60s
+          hrData.removeAt(0);
+          hrData.add(FlSpot(60, heartRate.toDouble()));
+
+          // Normalizar X
+          for (int i = 0; i < hrData.length; i++) {
+            hrData[i] = FlSpot(i.toDouble(), hrData[i].y);
+          }
+        }
+
+      
+        // DISMINUIR TIEMPO RESTANTE
+     
+        setState(() => secondsRemaining--);
+      } else {
+        t.cancel();
+        _saveSession();
+      }
+    });
+  }
+
+  
+  // GUARDAR SESIÓN AL FINALIZAR
+  
+  Future<void> _saveSession() async {
+    final timelineJson = jsonEncode(focusTimeline);
+
+    int durationMinutes = (initialSeconds / 60).round();
+
+    await DatabaseService.instance.insertSession(
+      SessionModel(
+        date: DateTime.now().toString().substring(0, 16),
+        duration: durationMinutes,
+        avgHR: _calculateAvgHR(),
+        focusLevel: _calculateFocusLevel(),
+        focusTimelineJson: timelineJson,
+      ),
+    );
+
+    if (!mounted) return;
+    Navigator.pop(context);
+  }
+
+  int _calculateAvgHR() {
+    if (hrData.isEmpty) return 0;
+    double sum = hrData.map((p) => p.y).reduce((a, b) => a + b);
+    return (sum / hrData.length).round();
+  }
+
+  double _calculateFocusLevel() {
+    if (focusTimeline.isEmpty) return 0;
+    int high = focusTimeline.where((e) => e == "alta").length;
+    return high / focusTimeline.length;
+  }
+
+ 
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: const Text(
+          'Sesión en Tiempo Real',
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: AppColors.primary,
+      ),
+
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              _buildInfoCard(),
+              const SizedBox(height: 30),
+
+              _buildChart(),
+
+              const SizedBox(height: 40),
+
+              // Timer fijo abajo
+              _buildTimer(),
+            ],
+          ),
+        ),
+      ),
+
+
+    );
+  }
+  
+  // HR Y CONCENTRACIÓN
+  
+  Widget _buildInfoCard() {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          )
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          Column(
+            children: [
+              Text("HR", style: AppStyles.heading2),
+              const SizedBox(height: 8),
+              Text(
+                "$heartRate bpm",
+                style: AppStyles.heading1.copyWith(color: AppColors.primary),
+              ),
+            ],
+          ),
+          Column(
+            children: [
+              Text("Concentración", style: AppStyles.heading2),
+              const SizedBox(height: 8),
+              Text(
+                focusLevel,
+                style: AppStyles.heading1.copyWith(color: AppColors.secondary),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  // GRÁFICO HR
+
+  Widget _buildChart() {
+    if (hrData.isEmpty) {
+      return const Center(
+        child: Text(
+          "Cargando datos...",
+          style: TextStyle(fontSize: 16),
+        ),
+      );
+    }
+
+    return Column(
+      children: [
+        const Text(
+          "Frecuencia cardíaca (bpm)",
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 10),
+
+        SizedBox(
+          height: 250,
+          child: LineChart(
+            LineChartData(
+              minY: 40,
+              maxY: 150,
+              minX: 0,
+              maxX: 60,
+              lineBarsData: [
+                LineChartBarData(
+                  spots: hrData,
+                  isCurved: true,
+                  color: AppColors.primary,
+                  barWidth: 4,
+                  dotData: const FlDotData(show: false),
+                  belowBarData: BarAreaData(
+                    show: true,
+                    color: AppColors.primary.withOpacity(0.15),
+                  ),
+                )
+              ],
+              titlesData: FlTitlesData(
+                bottomTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    reservedSize: 22,
+                    interval: 10,
+                    getTitlesWidget: (value, meta) {
+                      if (value % 10 == 0) {
+                        return Text("${value.toInt()}s",
+                            style: const TextStyle(fontSize: 10));
+                      }
+                      return const SizedBox();
+                    },
+                  ),
+                ),
+                leftTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    interval: 20,
+                    reservedSize: 35,
+                    getTitlesWidget: (value, meta) {
+                      return Text("${value.toInt()}",
+                          style: const TextStyle(fontSize: 10));
+                    },
+                  ),
+                ),
+                rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+              ),
+              gridData: const FlGridData(show: true),
+              borderData: FlBorderData(show: true),
+            ),
+          ),
+        ),
+
+        const SizedBox(height: 10),
+        const Text(
+          "Tiempo (s)",
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+      ],
+    );
+  }
+  
+  Widget _buildTimer() {
+    int minutes = secondsRemaining ~/ 60;
+    int seconds = secondsRemaining % 60;
+
+    return Column(
+      children: [
+        const Text(
+          "Tiempo restante",
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            color: Colors.black54,
+          ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          "${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}",
+          style: AppStyles.heading1.copyWith(
+            fontSize: 42,
+            fontWeight: FontWeight.bold,
+            color: AppColors.primary,
+          ),
+        ),
+        const SizedBox(height: 10),
+      ],
+    );
+  }
+}
+ \end{minted}
+
+   \item Configuración:
+\begin{minted}{dart}
+import 'package:flutter/material.dart';
+import '../utils/colors.dart';
+import '../utils/styles.dart';
+import '../services/prefs.dart';
+import 'training_screen.dart';
+
+class ConfigScreen extends StatefulWidget {
+  const ConfigScreen({super.key});
+
+  @override
+  State<ConfigScreen> createState() => _ConfigScreenState();
+}
+
+class _ConfigScreenState extends State<ConfigScreen> {
+  final SettingsService settings = SettingsService();
+  int sessionMinutes = 25;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSettings();
+  }
+
+  Future<void> _loadSettings() async {
+    sessionMinutes = await settings.getSessionDuration();
+    setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          "Configuración",
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: AppColors.primary,
+      ),
+
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+          
+            // Ajuste de tiempo de sesión
+          
+            Text("Tiempo de sesión", style: AppStyles.heading1),
+            const SizedBox(height: 10),
+
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: AppColors.surface,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
+                  )
+                ],
+              ),
+
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Duración (minutos)", style: AppStyles.heading2),
+                  const SizedBox(height: 12),
+
+                  Slider(
+                    min: 5,
+                    max: 60,
+                    divisions: 11,
+                    value: sessionMinutes.toDouble(),
+                    activeColor: AppColors.primary,
+                    onChanged: (value) {
+                      setState(() => sessionMinutes = value.toInt());
+                    },
+                    label: "$sessionMinutes min",
+                  ),
+
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      "$sessionMinutes min",
+                      style: AppStyles.heading2,
+                    ),
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  ElevatedButton(
+                    onPressed: () async {
+                      await settings.saveSessionDuration(sessionMinutes);
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Configuración guardada"),
+                          duration: Duration(seconds: 1),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: Colors.white,
+                    ),
+                    child: const Text("Guardar"),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 40),
+
+            
+            // Opciones de calibración
+            
+            Text("Calibración del asistente", style: AppStyles.heading1),
+            const SizedBox(height: 10),
+
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: AppColors.surface,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
+                  )
+                ],
+              ),
+
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Realiza una calibración si notas errores en la lectura de concentración.",
+                    style: AppStyles.body,
+                  ),
+                  const SizedBox(height: 16),
+
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const TrainingScreen(),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.accent,
+                      foregroundColor: Colors.white,
+                    ),
+                    child: const Text("Iniciar Calibración"),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+ \end{minted}
+
+    \item Historial:
+\begin{minted}{dart}
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import '../services/database.dart';
+import '../models/session.dart';
+import '../utils/styles.dart';
+import '../utils/colors.dart';
+import 'session_detail_screen.dart';
+
+class HistoryScreen extends StatefulWidget {
+  const HistoryScreen({super.key});
+
+  @override
+  State<HistoryScreen> createState() => _HistoryScreenState();
+}
+
+class _HistoryScreenState extends State<HistoryScreen> {
+  List<SessionModel> sessions = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSessions();
+  }
+
+  Future<void> _loadSessions() async {
+    final data = await DatabaseService.instance.getSessions();
+    setState(() => sessions = data);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Historial de Sesiones',
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: AppColors.primary,
+      ),
+
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: sessions.isEmpty
+            ? const Center(
+          child: Text(
+            'No hay sesiones registradas.',
+            style: TextStyle(fontSize: 18),
+          ),
+        )
+            : ListView.builder(
+          itemCount: sessions.length,
+          itemBuilder: (context, index) {
+            return _buildSessionCard(sessions[index]);
+          },
+        ),
+      ),
+    );
+  }
+
+  
+  // LISTAR CADA SESIÓN
+  
+  Widget _buildSessionCard(SessionModel s) {
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => SessionDetailScreen(session: s),
+          ),
+        );
+      },
+      borderRadius: BorderRadius.circular(18),
+
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(
+            color: Colors.black.withOpacity(0.08),
+            width: 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
+            )
+          ],
+        ),
+
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(s.date, style: AppStyles.heading2),
+            const SizedBox(height: 10),
+
+            Text("Duración: ${s.duration} min", style: AppStyles.body),
+            Text("HR Promedio: ${s.avgHR} bpm", style: AppStyles.body),
+            Text("Concentración Promedio: ${(s.focusLevel * 100).toInt()}%",
+                style: AppStyles.body),
+
+            const SizedBox(height: 14),
+
+            // ⭐ TIMELINE con borde elegante ⭐
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.black.withOpacity(0.1)),
+              ),
+
+              child: Row(
+                children: _buildMiniFocusGraph(s),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+
+  //  GRÁFICO DE ESTADOS DE CONCENTRACIÓN
+
+  List<Widget> _buildMiniFocusGraph(SessionModel s) {
+    List<dynamic> timeline = [];
+
+    try {
+      timeline = jsonDecode(s.focusTimelineJson);
+    } catch (e) {
+      return [const Text("Sin datos")];
+    }
+
+    if (timeline.isEmpty) {
+      return [
+        const Text(
+          "Sin datos de concentración",
+          style: TextStyle(fontSize: 12),
+        )
+      ];
+    }
+
+    return timeline.map((value) {
+      return Expanded(
+        child: Container(
+          height: 12,
+          margin: const EdgeInsets.symmetric(horizontal: 1),
+          decoration: BoxDecoration(
+            color: value == "alta" ? Colors.green : Colors.red,
+            borderRadius: BorderRadius.circular(3),
+          ),
+        ),
+      );
+    }).toList();
+  }
+}
+
+ \end{minted}
+
+\end{itemize}
