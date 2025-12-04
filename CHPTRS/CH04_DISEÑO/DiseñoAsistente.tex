@@ -48,7 +48,7 @@ En la Figura~\ref{fig:4.diagramabBloques} se muestra el diagrama de bloques con 
 \subsection{Microcontrolador}
     El microcontrolador es el encargado de realizar el control de todo el asistente, ya que en este estarán conectados el sensor MAX30102 y el motor de vibración. Por eso, el microcontrolador ha seleccionar debe contar con pines I2C que permitan la comunicación con el sensor mencionado previamente, pines PWM para el motor, así como la capacidad de realizar un procesamiento adecuado con una memoria mayor a 200KB ya que se contará con un clasificador, y la capacidad de comunicarse por \textit{Bluetooth} con el aplicativo.\\
     
-    Por ello, el microcontrolador que se utilizará en esta tesis por motivos de estudio será el ESP-WROOM-32 como se ha mencionado previamente en la matriz morfológica (ver Tabla~\ref{tab:3.matrizcontrol}), integrado en un módulo que incluye el chip CP2102 (ver Figura ~\ref{fig:4.microcontrolador}) para la comunicación USB-Serial y la programación directa desde una computador. Este incorpora una conexión \textit{Bluetooth} v4.2 BR/EDR y BLE, así como WI-Fi. De esta manera se podrá enviar y recibir información del aplicativo móvil con la tecnología BLE \textit{(Bluetooth Low Energy)}, el cual destaca por un bajo consumo de corriente durante la comunicación inalámbrica, lo cual es importante para dispositivos portátiles como el asistente a desarrollar. Asimismo, presenta disponibilidad local, lo cual facilita su implementación a diferencia de las otras opciones para el presente trabajo. En la Tabla~\ref{tab:Tabla de características del microcontrolador} se muestran las características importantes del microcontrolador.
+    Por ello, el microcontrolador que se utilizará en esta tesis por motivos de estudio será el ESP-WROOM-32 como se ha mencionado previamente en la matriz morfológica (ver Tabla~\ref{tab:3.matrizcontrol}), integrado en un módulo que incluye el chip CP2102 (ver Figura ~\ref{fig:4.microcontrolador}) para la comunicación USB-Serial y la programación directa desde una computador. Este incorpora una conexión \textit{Bluetooth} v4.2 BR/EDR y BLE, así como WI-Fi. De esta manera se podrá enviar y recibir información del aplicativo móvil con la tecnología \ac{BLE}, el cual destaca por un bajo consumo de corriente durante la comunicación inalámbrica, lo cual es importante para dispositivos portátiles como el asistente a desarrollar. Asimismo, presenta disponibilidad local, lo cual facilita su implementación a diferencia de las otras opciones para el presente trabajo. En la Tabla~\ref{tab:Tabla de características del microcontrolador} se muestran las características importantes del microcontrolador.
     
 \begin{table}[H]
 \centering
@@ -154,27 +154,36 @@ Peso                        & Mínimo posibles    & 8g                          
 \subsection{Motor de vibración}
 El motor de vibración seleccionado, cuya función es brindar retroalimentación háptica, corresponde a un motor de masa giratoria excéntrica tipo moneda que se puede observar en la Figura~\ref{fig:4.motor moneda}, ya que este brinda una gran compatibilidad considerando que se necesita un tamaño compacto en el diseño propuesto de banda braquial a comparación del motor móvil y el motor cilíndrico (ver Figura~\ref{fig:4.motorB} y~\ref{fig:4.motorC} respectivamente), siendo este un factor determinante para la decisión final, ya que tienen características similares. Asimismo, cuenta con una tensión nominal baja, la corriente nominal media entre las opciones, alta disponibilidad y un  bajo costo, lo que lo convierte en una opción adecuada para el asistente.  En la siguiente Tabla~\ref{tab:4.Caracteristicas motor} se muestra la comparación entre las opciones de motores de vibración.
 
+
+% \usepackage{multirow}
+% \usepackage{hhline}
+% \usepackage{colortbl}
+
+
 \begin{table}[H]
 \centering
 \caption{Comparación entre motores de vibración}
 \label{tab:4.Caracteristicas motor}
-\begin{tabular}{|c|c||c|c|c|} 
+\arrayrulecolor{black}
+\begin{tabular}{|c|c|c||c|c|c|} 
 \hline
-Características   & Requisitos       & Motor tipo moneda & Motor móvil & Motor cilíndrico  \\ 
-\hhline{|==::===|}
-Voltaje nominal   & 3-5V             & 3V                & 3V          & 1.5-3V            \\ 
+\multirow{2}{*}{Características} & \multirow{2}{*}{Requisitos} & \multirow{2}{*}{Unidades} & \multicolumn{3}{c|}{Motor}         \\ 
+\cline{4-6}
+                                 &                             &                           & Tipo moneda & Móvil  & Cilíndrico  \\ 
+\hhline{|===::===|}
+Voltaje nominal                  & 3-5                         & V                         & 3           & 3      & 1.5-3       \\ 
 \hline
-Corriente nominal & Mínima posible   & 80mA              & 70mA        & 150mA             \\ 
+Corriente nominal                & Mínima posible              & mA                        & 80          & 70     & 150         \\ 
 \hline
-Activación        & PWM              & PWM               & ~PWM        & PWM               \\ 
+Activación                       & PWM                         & -                         & PWM         & ~PWM   & PWM         \\ 
 \hline
-Dimensiones       & Mínimas posibles & 10Ø x 3 mm        & 16 x 6 mm   & 4Ø x 11.5 mm      \\ 
+Dimensiones                      & Mínimas posibles            & mm                        & 10 Ø x 3    & 16 x 6 & 4 Ø x 11.5  \\ 
 \hline
-Peso              & Mínimo posible   & 1g                & -           & 6g                \\
-\hline
+Peso                             & Mínimo posible              & g                         & 1g          & -      & 6g          \\
+\arrayrulecolor{black}\hline
 \end{tabular}
+\arrayrulecolor{black}
 \end{table}
-
  %  \begin{figure}[H]
   %  \centering
    % \includegraphics[width=0.4\textwidth]{CHPTRS/CH04_DISEÑO/imagenes/MotorERM.png}
@@ -256,7 +265,7 @@ Por otro lado, considerando que el motor estará conectado al microcontrolador y
    
 \end{figure}
 
-El transistor seleccionado es el 2N3904 que cuenta con una $V_{CE(sat)}$ de 0.3V, una ganancia $h_{FE}$ de 200 en promedio, un $V_{BE(sat)}$ de 0.95V maximo según su hoja de datos. Asimismo, como se sabe que la corriente del conector($I_C$) es 80mA por parte del motor y utilizando la relación $I_C=h_{FE}\,I_B$, con $h_{FE} = 200$ se obtiene que la corriente de la base ($I_{B0}$) es igual a 0.4mA. Adicionalmente, conocienco  el voltaje que es emitido desde el microcontrolador es de 3.3V, se utiliza la Ecuación~\ref{ec:4.motor} para hallar el valor de la resistencia R1 que es de $5.875\,k\Omega$, eligiendo el valor comercial más próximo de $5.6\,k\Omega$.
+El transistor seleccionado es el 2N3904 que cuenta con una $V_{CE(sat)}$ de 0.3\,V, una ganancia $h_{FE}$ de 200 en promedio, un $V_{BE(sat)}$ de 0.95\,V máximo según su hoja de datos. Asimismo, como se sabe que la corriente del conector($I_C$) es 80\,mA por parte del motor y utilizando la relación $I_C=h_{FE}\,I_B$, con $h_{FE} = 200$ se obtiene que la corriente de la base ($I_{B}$) es igual a 0.4\,mA. Adicionalmente, conocienco  el voltaje que es emitido desde el microcontrolador es de 3.3\,V, se utiliza la Ecuación~\ref{ec:4.motor} para hallar el valor de la resistencia R1 que es de $5.875\,k\Omega$, eligiendo el valor comercial más próximo de $5.6\,k\Omega$.
 \begin{align}
 \label{ec:4.motor}
 R1=\frac{V_{GPIO}-V_{BE(sat)}}{I_{B0}}\,\,\,\text{[\si{\ohm}]}
@@ -265,10 +274,10 @@ R1=\frac{V_{GPIO}-V_{BE(sat)}}{I_{B0}}\,\,\,\text{[\si{\ohm}]}
 Adicionalmente, al colocar $R1 = 5.6\,k\text{\si{\ohm}}$, se obtiene una corriente $I_{B}$ distinta a la calculada previamente. Esta se halla mediante la Ecuación~\ref{ec:4.motorcorrientIB}, obteniendo como resultado $I_{B1} = 0.42\,\si{\milli\ampere}$
 \begin{align}
 \label{ec:4.motorcorrientIB}
-I_B=\frac{V_{GPIO}-V_{BE(sat)}}{R1}\,\,\,\text{[\si{\ampere}]}
+I_{B1}=\frac{V_{GPIO}-V_{BE(sat)}}{R1}\,\,\,\text{[\si{\ampere}]}
 \end{align}
 
-Finalmente, se ha colocado la resistencia $R2 = 47\,k\text{\si{\ohm}}$ de protección, para asegurar la llegada de solo $0.4\, \si{\milli\ampere}$ al transistor, la cual es una corriente muy por debajo de los 40mA permitidos por el GPIO del ESP32. Esta resistencia es colocada en paralelo a Base-Emisor, obtenido mediante la Ecuación~\ref{ec:4.motorR2}.
+Finalmente, se ha colocado la resistencia $R2 = 47\,k\text{\si{\ohm}}$ de protección, para asegurar la llegada de solo $0.4\, \si{\milli\ampere}$ al transistor, la cual es una corriente muy por debajo de los 40\,mA permitidos por el GPIO del ESP32. Esta resistencia es colocada en paralelo a Base-Emisor, obtenido mediante la Ecuación~\ref{ec:4.motorR2}.
 \begin{align}
 \label{ec:4.motorR2}
 R2=\frac{V_{BE}}{I_{B1}-I_{B0}}\,\,\,\text{[\si{\ohm}]}
@@ -294,13 +303,13 @@ En el caso del módulo de carga, los requisitos son que pueda recargar baterías
   vlines,
 }
 Características del módulo de carga             &                                         \\
-Voltaje de entrada (Tipo C)                    & 5V                                      \\
-Corriente de protección contra sobre corriente & 3A                                      \\
-Corriente de carga ajustable                   & 1A                                      \\
-Peso                                           & 2g                                      \\
+Voltaje de entrada (Tipo C)                    & 5\,V                                      \\
+Corriente de protección contra sobre corriente & 3\,A                                      \\
+Corriente de carga ajustable                   & 1\,A                                      \\
+Peso                                           & 2\,g                                      \\
 Indicadores                                    & {Rojo - Cargando\\Azul - Carga completa} \\
-Temperatura de funcionamiento                  & -40°C a +85°C                           \\
-Dimensiones                                    & 27.7 x 17 mm                            \\
+Temperatura de funcionamiento                  & -40\,°C a +85\,°C                           \\
+Dimensiones                                    & 27.7 x 17\,mm                            \\
 \end{tblr}
 \end{minipage}
 \hfill
@@ -324,19 +333,19 @@ Dimensiones                                    & 27.7 x 17 mm                   
 \centering
 \caption{Consumo de potencia  del circuito electrónico}
 \label{tab:4.Consumo corrientes}
-\begin{tblr}{
-  column{1} = {c},
-  column{2} = {c},
-  cell{5}{1} = {c=3}{},
-  hlines,
-  vlines,
-}
-Componente         & Corriente de uso & Voltaje & Potencia \\
-Módulo ESP32 (BLE) & 100 mA~          & ~5 V    & 500 mW   \\
-Sensor MAX30101    & 20 mA             & 3.3 V   & 66 mW     \\
-Motor de vibración & 80 mA             & 3.3 V   & 264 mW    \\
-Total              &                  &         & 830 mW    
-\end{tblr}
+\begin{tabular}{|c|c|c|c|} 
+\hline
+Componente         & Corriente de uso(mA) & Voltaje(V) & Potencia(mW)  \\ 
+\hline
+Módulo ESP32 (BLE) & 100                  & 5          & 500           \\ 
+\hline
+Sensor MAX30101    & 20                   & 3.3        & 66            \\ 
+\hline
+Motor de vibración & 80                   & 3.3        & 264           \\ 
+\hline
+\multicolumn{3}{|c|}{Total}                            & 830 mW        \\
+\hline
+\end{tabular}
 \end{table}
 
 El voltaje que las baterías recargables portables brindan es de 3.7 V; sin embargo, el microcontrolador opera a 5 V. Por ello, se requiere un elevador de voltaje y se optó por un \textit{Step Up} modelo MT3608 (ver Figura~\ref{fig:4.regulador}) debido a su disponibilidad en el mercado local y cumple con el requisito básico, de aumentar a 5 voltios, el voltaje de 3.7 voltios que suelen brindar las baterías para poder alimentar el microcontrolador por la entrada Vin y una corriente de salida máxima de 2 A. Sin embargo, se debe recalcar que existen opciones más compactas, como los de la serie U3V40x de Pololu, que permitirían optimizar mejor el tamaño y por ende aumentar la portabilidad. No obstante, estos son de elevado costo y de baja disponibilidad local. Por lo tanto, dentro del trabajo de esta tesis se optó por utilizar el MT3608 como solución práctica, sus principales características se encuentran en la  Tabla~\ref{tab:4.Caracteristicas regulador}.
@@ -349,27 +358,27 @@ El voltaje que las baterías recargables portables brindan es de 3.7 V; sin emba
 \centering
 \caption{Características de los reguladores Step-Up}
 \label{tab:4.Caracteristicas regulador}
-\begin{tabular}{|c|c||c|c|} 
-\hline
-Características del regulador  & Requisitos       & MT3608         & U3V40F5                \\ 
-\hhline{|==::==|}
-Voltaje de Entrada             & 3.7V             & 2V a 24V~      & 1.3-5V                 \\ 
-\hline
-Voltaje de Salida              & 5V               & 5V a 28V       & 5V                     \\ 
-\hline
-Corriente de salida            & min 200mA        & 2A             & 9.5A                   \\ 
-\hline
-Protección sobre - temperatura & -                & SI             & -                      \\ 
-\hline
-Eficiencia de conversión       & min 90\%         & 93\% máx.      & 94 \% Max              \\ 
-\hline
-Peso                           & Mínimo posible   & 5g             & 1.5g                   \\ 
-\hline
-Dimensiones                    & Mínimas posibles & 36 x 17 x 7 mm & 15.4 x 15.4 x 5.59 mm  \\
-\hline
+\arrayrulecolor{black}
+\begin{tabular}{|c|c|c||c|c|} 
+\cline{1-1}\arrayrulecolor{black}\cline{2-2}\arrayrulecolor{black}\cline{3-5}
+Características del regulador  & Unidades & Requisitos   & MT3608      & U3V40F5             \\ 
+\hhline{|=>{\arrayrulecolor{black}}=>{\arrayrulecolor{black}}=::==|}
+Voltaje de Entrada             & V        & 3.7          & 2-24~       & 1.3-5               \\ 
+\cline{1-1}\arrayrulecolor{black}\cline{2-2}\arrayrulecolor{black}\cline{3-5}
+Voltaje de Salida              & V        & 5            & 5-28        & 5                   \\ 
+\cline{1-1}\arrayrulecolor{black}\cline{2-2}\arrayrulecolor{black}\cline{3-5}
+Corriente de salida            & mA       & Mín. 200     & 2           & 9.5                 \\ 
+\cline{1-1}\arrayrulecolor{black}\cline{2-2}\arrayrulecolor{black}\cline{3-5}
+Protección sobre - temperatura & -        & -            & SI          & -                   \\ 
+\cline{1-1}\arrayrulecolor{black}\cline{2-2}\arrayrulecolor{black}\cline{3-5}
+Eficiencia de conversión       & \%       & Mín. 90\%    & Máx. 93\%~  & Máx. 94 \%          \\ 
+\cline{1-1}\arrayrulecolor{black}\cline{2-2}\arrayrulecolor{black}\cline{3-5}
+Peso                           & g        & Mín. posible & 5           & 1.5                 \\ 
+\cline{1-1}\arrayrulecolor{black}\cline{2-2}\arrayrulecolor{black}\cline{3-5}
+Dimensiones                    & mm       & Mín. posible & 36 x 17 x 7 & 15.4 x 15.4 x 5.59  \\
+\cline{1-1}\arrayrulecolor{black}\cline{2-2}\arrayrulecolor{black}\cline{3-5}
 \end{tabular}
 \end{table}
-
 
 \begin{figure}[H]
     \centering
@@ -398,28 +407,31 @@ Dimensiones                    & Mínimas posibles & 36 x 17 x 7 mm & 15.4 x 15.
 
 \end{figure}
 
-Asimismo, sabemos que el sensor MAX30102 y el motor de vibración seleccionados operan a un voltaje de 3.3 V a 20mA y 80mA respectivamente. Por ello, se ha seleccionado un regulador \textit{Step Down} modelo MP1584 (Figura~\ref{fig:4.mp}) debido a que cumple con el requisito básico de diminuir los 5V a un 3.3 V, unas dimensiones ligeramente más pequeñas como se observa en la Tabla~\ref{tab:4.Caracteristicas regulador step-dopwn} y una mayor eficiencia que el módulo AMS (Figura~\ref{fig:4.ams}), ya que este último es un regulador lineal.
+Asimismo, sabemos que el sensor MAX30102 y el motor de vibración seleccionados operan a un voltaje de 3.3\,V a 20\,mA y 80mA respectivamente. Por ello, se ha seleccionado un regulador \textit{Step Down} modelo MP1584 (Figura~\ref{fig:4.mp}) debido a que cumple con el requisito básico de diminuir los 5\,V a un 3.3\,V, unas dimensiones ligeramente más pequeñas como se observa en la Tabla~\ref{tab:4.Caracteristicas regulador step-dopwn} y una mayor eficiencia que el módulo AMS (Figura~\ref{fig:4.ams}), ya que este último es un regulador lineal.
+
+
 
 \begin{table}[H]
 \centering
 \caption{Características de los reguladores Step-Down}
 \label{tab:4.Caracteristicas regulador step-dopwn}
-\begin{tabular}{|c|c||c|c|} 
-\hline
-Características del regulador & Requisitos       & MP1584         & AMS1117          \\ 
-\hhline{|==::==|}
-Voltaje de Entrada            & 3.7V             & 4.5 a 28V      & 4-12V            \\ 
-\hline
-Voltaje de Salida             & 5V               & 0.8 a 18V      & 3.3V             \\ 
-\hline
-Corriente de salida           & min 200mA        & 3A             & 800 mA           \\ 
-\hline
-Eficiencia de conversión      & Máxima posible   & 96\% máx.      & 66\%             \\ 
-\hline
-Peso                          & Mínimo posible   & 3g             & 1.5g             \\ 
-\hline
-Dimensiones                   & Mínimas posibles & 22 x 17 x 4 mm & 36 x 17 x 14 mm  \\
-\hline
+\arrayrulecolor{black}
+\begin{tabular}{l|c|c|c||c|c|} 
+\cline{2-2}\arrayrulecolor{black}\cline{3-3}\arrayrulecolor{black}\cline{4-6}
+ & Características del regulador & Unidades & Requisitos   & MP1584      & AMS1117       \\ 
+\hhline{~=>{\arrayrulecolor{black}}=>{\arrayrulecolor{black}}=::==|}
+ & Voltaje de Entrada            & V        & 3.7          & 4.5 a 28V   & 4-12          \\ 
+\cline{2-2}\arrayrulecolor{black}\cline{3-3}\arrayrulecolor{black}\cline{4-6}
+ & Voltaje de Salida             & V        & 5            & 0.8 a 18    & 3.3           \\ 
+\cline{2-2}\arrayrulecolor{black}\cline{3-3}\arrayrulecolor{black}\cline{4-6}
+ & Corriente de salida           & mA       & min. 200     & 3000        & 800           \\ 
+\cline{2-2}\arrayrulecolor{black}\cline{3-3}\arrayrulecolor{black}\cline{4-6}
+ & Eficiencia de conversión      & \%       & Máx. posible & máx. 96\%   & 66 \%         \\ 
+\cline{2-2}\arrayrulecolor{black}\cline{3-3}\arrayrulecolor{black}\cline{4-6}
+ & Peso                          & g        & Mín. posible & 3           & 1.5           \\ 
+\cline{2-2}\arrayrulecolor{black}\cline{3-3}\arrayrulecolor{black}\cline{4-6}
+ & Dimensiones                   & mm       & Mín. posible & 22 x 17 x 4 & 36 x 17 x 14  \\
+\cline{2-2}\arrayrulecolor{black}\cline{3-3}\arrayrulecolor{black}\cline{4-6}
 \end{tabular}
 \end{table}
 \begin{figure}[H]
@@ -448,7 +460,7 @@ Dimensiones                   & Mínimas posibles & 22 x 17 x 4 mm & 36 x 17 x 1
     \caption{Reguladores \textit{Step-Down} considerados}
 
 \end{figure}
-En la Figura~\ref{fig:4.eficiencia} se muestra la gráfica Eficiencia vs Corriente de salida extraída de la hoja de datos del regulador \textit{Step-Up} seleccionado. Esta  permite tener como referencia una eficiencia aproximada de 92\% para una entrada de 3.7V y una salida de 5V. Asimismo, si bien en la Tabla~\ref{tab:4.Consumo corrientes} se muestra un consumo máximo de 200 mA, se tiene que tener en cuenta que el motor no se encontrará siempre encendido, ya que se busca que este solo se active en caso de retroalimentación con una duración entre 200 y 500 milisegundos. Por ello, se optó por hacer el cálculo de corriente necesaria en la batería, considerando ambos casos: 120 mA sin motor y 200 mA con motor.
+En la Figura~\ref{fig:4.eficiencia} se muestra la gráfica Eficiencia vs Corriente de salida extraída de la hoja de datos del regulador \textit{Step-Up} seleccionado. Esta  permite tener como referencia una eficiencia aproximada de 92\,\% para una entrada de 3.7\,V y una salida de 5\,V. Asimismo, si bien en la Tabla~\ref{tab:4.Consumo corrientes} se muestra un consumo máximo de 200 mA, se tiene que tener en cuenta que el motor no se encontrará siempre encendido, ya que se busca que este solo se active en caso de retroalimentación con una duración entre 200 y 500 milisegundos. Por ello, se optó por hacer el cálculo de corriente necesaria en la batería, considerando ambos casos: 120 mA sin motor y 200 mA con motor.
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.45\textwidth]{CHPTRS/CH04_DISEÑO/imagenes/Eficiencia.png}
@@ -458,19 +470,19 @@ En la Figura~\ref{fig:4.eficiencia} se muestra la gráfica Eficiencia vs Corrien
     \caption*{\textit{Nota: Figura tomada de \cite{4.eficiencia}}}
     \end{figure}
 
-De igual manera, en la Figura~\ref{fig:4.eficiencia33} se muestra la gráfica Eficiencia vs Corriente de salida del regulador \textit{Step-Down} seleccionado, donde si bien no se muestra la curva para una entrada de 5V. Por ello, a través de aproximaciones, permite tener una referencia aproximada de 85\%Además, la corriente de entrada de cada regulador se calcula en base la Ecuación~\ref{ec:4.regu}.
+De igual manera, en la Figura~\ref{fig:4.eficiencia33} se muestra la gráfica Eficiencia vs Corriente de salida del regulador \textit{Step-Down} seleccionado, donde si bien no se muestra la curva para una entrada de 5\,V. Por ello, a través de aproximaciones, permite tener una referencia aproximada de 85\%Además, la corriente de entrada de cada regulador se calcula en base la Ecuación~\ref{ec:4.regu}.
 \begin{align}
 \label{ec:4.regu}
 I_{IN} &= \frac{I_{OUT}* V_{OUT}}{Eficiencia* V_{IN}} 
 \end{align}
 
-donde $I_{IN}$ e $I_{OUT}$  son las corrientes de entrada y salida del regulador, y $V_{IN}$ y $V_{OUT}$  son también los voltajes de entrada y salida del regulador. En el caso del regulador MP1584 se tiene como corriente de salida los 20mA del sensor en el primer caso, con un voltaje de salida 3.3V y un voltajde entrada de 5V y una eficiencia de 85\%, dando como resultado que la corriente de entrada para este regulador $I_{INSD_1} =15.53 mA$. Para el segundo caso, donde se consideran los 80 mA del motor, se obtiene$I_{INSD_2} =77.65 mA$ A partir de esta, se obtiene la corriente de salida para el regulador \textit{Step-Up} a través de la Ecuación~\ref{ec:4.regu5}.
+donde $I_{IN}$ e $I_{OUT}$  son las corrientes de entrada y salida del regulador, y $V_{IN}$ y $V_{OUT}$  son también los voltajes de entrada y salida del regulador. En el caso del regulador MP1584 se tiene como corriente de salida los 20\,mA del sensor en el primer caso, con un voltaje de salida 3.3V y un voltaje de entrada de 5\,V y una eficiencia de 85\%, dando como resultado que la corriente de entrada para este regulador $I_{INSD_1} =15.53\, mA$. Para el segundo caso, donde se consideran los 80 mA del motor, se obtiene$I_{INSD_2} =77.65\, mA$ A partir de esta, se obtiene la corriente de salida para el regulador \textit{Step-Up} a través de la Ecuación~\ref{ec:4.regu5}.
 \begin{align}
 \label{ec:4.regu5}
 I_{outSU} &= I_{ESP}+ I_{INSD} 
 \end{align}
 
-donde $I_{ESP}$ es 100mA y $I_{INSD}$ corresponde a los 15.53mA y 77.65 mA calculados previamente para caso, obteniendo una corriente de salida total de 115.53mA para el primer caso y 177.65mA para el segundo caso, reemplazando con los valores correspondientes para este regulador, se tiene que se necesita una corriente de entrada $I_{tot_1}=169.69mA$ para el primer caso y $I_{tot_2}=260.94mA$ para el segundo caso. A partir de este valor se puede seleccionar la batería adecuada para el asistente.
+donde $I_{ESP}$ es 100\,mA y $I_{INSD}$ corresponde a los 15.53\,mA y 77.65\,mA calculados previamente para caso, obteniendo una corriente de salida total de 115.53\,mA para el primer caso y 177.65\,mA para el segundo caso, reemplazando con los valores correspondientes para este regulador, se tiene que se necesita una corriente de entrada $I_{tot_1}=169.69\,mA$ para el primer caso y $I_{tot_2}=260.94\,mA$ para el segundo caso. A partir de este valor se puede seleccionar la batería adecuada para el asistente.
 
 
 \begin{figure}[H]
@@ -484,15 +496,15 @@ donde $I_{ESP}$ es 100mA y $I_{INSD}$ corresponde a los 15.53mA y 77.65 mA calcu
     
 \subsection{Batería del dispositivo}
 
-La batería utilizada en el asistente es de Litio, las cuales poseen un voltaje nominal de 3.7 V. Asimismo, considerando que se requiere una autonomía energética que pueda abarcar sesiones de estudio de al menos 4 horas como mínimo, se calcula la capacidad $Cap$ que debe tener la batería seleccionada con la Ecuación~\ref{ec:4.cap}.
+La batería utilizada en el asistente es de Litio, las cuales poseen un voltaje nominal de 3.7\,V. Asimismo, considerando que se requiere una autonomía energética que pueda abarcar sesiones de estudio de al menos 4 horas como mínimo, se calcula la capacidad $Cap$ que debe tener la batería seleccionada con la Ecuación~\ref{ec:4.cap}.
 \begin{align}
 \label{ec:4.cap}
-Cap=I_{tot}*h
+Cap=I_{tot}*h\,\,\,[\si{\milli\ampere h}]
 \end{align}
 
-donde $I_{tot}$ corresponde a la corriente calculadas previamente para cada caso ($I_{tot_1}=169.69mA$ y $I_{tot_2}=260.94mA$ ) y $h$ son las horas requeridas del funcionamiento del sistema. Al reemplazar los valores mencionados se obtiene una capacidades de  678.76 mAh y 1043.76mAh. Al observar estos resultados, es necesario optimizar el uso del motor unicamente en los casos de distracción con un tiempo de funcionamiento en el rango mencionado previamente.\\
+donde $I_{tot}$ corresponde a la corriente calculadas previamente para cada caso ($I_{tot_1}=169.69\,mA$ y $I_{tot_2}=260.94\,mA$ ) y $h$ son las horas requeridas del funcionamiento del sistema. Al reemplazar los valores mencionados se obtiene una capacidades de  678.76\,mAh y 1043.76\,mAh. Al observar estos resultados, es necesario optimizar el uso del motor unicamente en los casos de distracción con un tiempo de funcionamiento en el rango mencionado previamente.\\
 
-Al implementar un factor de seguridad de 1.3 considerando que las baterías pueden descargarse hasta un 80\% para no dañarse, se requieren 877,65mAh y 1356,88mAh. Sin embargo, se optó por una batería de 1000 mAh (ver Figura~\ref{fig:4.bateria}), ya que se busca que el motor este en funcionamiento por tiempos muy cortos de retroalimentación. Además, permite conseguir una duración de 5.92 horas aproximadamente en el primer caso, es comercial y tiene un tamaño compacto.
+Al implementar un factor de seguridad de 1.3 considerando que las baterías pueden descargarse hasta un 80\% para no dañarse, se requieren 877.65\,mAh y 1356.88\,mAh. Sin embargo, se optó por una batería de 1000\.mAh (ver Figura~\ref{fig:4.bateria}), ya que se busca que el motor este en funcionamiento por tiempos muy cortos de retroalimentación. Además, permite conseguir una duración de 5.92 horas aproximadamente en el primer caso, es comercial y tiene un tamaño compacto.
 
 \begin{figure}[H]
     \centering
@@ -504,11 +516,11 @@ Al implementar un factor de seguridad de 1.3 considerando que las baterías pued
     \end{figure}
 
 \subsection{Switch de encendido}
-El switch que se ha decidido emplear en el presente trabajo es uno de tipo botón que cuenta con enganche (ver Figura~\ref{fig:4.boton}), ya que este permitirá con facilidad que el usuario pueda identificar cuando esta encendido y cuando apagado. Asimismo, cuenta con una alta disponibilidad adecuada, es compacto y sus características facilitan su integración, ya que este soporta una corriente de 0.3 amperios a 30 voltios. 
+El switch que se ha decidido emplear en el presente trabajo es uno de tipo botón que cuenta con enganche (ver Figura~\ref{fig:4.boton}), ya que este permitirá con facilidad que el usuario pueda identificar cuando esta encendido y cuando apagado. Asimismo, cuenta con una alta disponibilidad adecuada y es compacto, lo cual facilita su integración. Además, soporta una corriente de 0.3\,A\,@\, 30\,V. 
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.25\textwidth]{CHPTRS/CH04_DISEÑO/imagenes/boton.png}
+    \includegraphics[width=0.2\textwidth]{CHPTRS/CH04_DISEÑO/imagenes/boton.png}
     \caption{Switch tipo botón}
     \label{fig:4.boton}
     \captionsetup{justification=centering,margin=1cm}
@@ -516,8 +528,34 @@ El switch que se ha decidido emplear en el presente trabajo es uno de tipo botó
     \end{figure}
 
 
-\subsection{Diagrama esquemático}
-En la Figura~\ref{fig:4.esquematico} se muestra el diagrama esquemático general del sistema. El microcontrolador ESP32 es alimentado por el regulador step up. Asimismo, el regulador step down es el encargado de alimentar al sensor MAX30102 y al motor de vibración con 3.3 V. 
+\subsection{Diagrama esquemático y PCB}
+En la Figura~\ref{fig:4.esquematico} se muestra el diagrama esquemático general del sistema. El microcontrolador ESP32 es alimentado por el regulador step up. Asimismo, el regulador step down es el encargado de alimentar al sensor MAX30102 y al motor de vibración con 3.3 V. \\
+Además, en las Figuras~\ref{fig:4.PCBS} se aprecia el diseño PCB realizado por el autor para el asistente. En este se ubican ambos reguladores, el módulo de carga el circuito de protección del motor, así como los conectores para la batería, motor y sensor.
+\begin{figure}[H]
+    \centering
+    % Primera imagen
+    \begin{subfigure}{0.4\textwidth}
+         \centering
+            \includegraphics[width=0.9\textwidth]{CHPTRS/CH04_DISEÑO/imagenes/pcb.png}
+            \caption{PCB diseñada}
+            \label{fig:4.pcb}
+            \captionsetup{justification=centering,margin=1cm}
+    \end{subfigure}
+    \hfill
+    % Segunda imagen
+    \begin{subfigure}{0.4\textwidth}
+       
+        \centering
+        \includegraphics[width=0.9\linewidth]{CHPTRS/CH04_DISEÑO/imagenes/pcb 3d.png}
+        \caption{vista 3D de la PCB}
+        \label{fig:4.pcb3d}
+        
+    \end{subfigure}
+
+    \caption{PCB diseñada}
+    \label{fig:4.PCBS}
+     \end{figure}   
+
 \begin{figure}[H]
     \centering
     \includegraphics[angle=90, width=0.95\textwidth]{CHPTRS/CH04_DISEÑO/imagenes/Esquematico.pdf}
@@ -530,33 +568,8 @@ En la Figura~\ref{fig:4.esquematico} se muestra el diagrama esquemático general
 
 
 
-\subsection{Diseño de PCB}
-En las Figuras~\ref{fig:4.PCBS} y  se aprecia el diseño realizado de una PCB de potencia para el asistente. En este se ubican ambos reguladores, el módulo de carga el circuito de protección del motor, así como los conectores para la batería, motor y sensor.
 
-\begin{figure}[H]
-    \centering
-    % Primera imagen
-    \begin{subfigure}{0.4\textwidth}
-         \centering
-            \includegraphics[width=\textwidth]{CHPTRS/CH04_DISEÑO/imagenes/pcb.png}
-            \caption{PCB diseñada}
-            \label{fig:4.pcb}
-            \captionsetup{justification=centering,margin=1cm}
-    \end{subfigure}
-    \hfill
-    % Segunda imagen
-    \begin{subfigure}{0.4\textwidth}
-       
-        \centering
-        \includegraphics[width=\linewidth]{CHPTRS/CH04_DISEÑO/imagenes/pcb 3d.png}
-        \caption{vista 3D de la PCB}
-        \label{fig:4.pcb3d}
-        
-    \end{subfigure}
 
-    \caption{PCB de potencia diseñada}
-    \label{fig:4.PCBS}
-     \end{figure}   
 \section{Diseño mecánico}
 
 \subsection{Selección del material de correa}
@@ -586,7 +599,7 @@ Para poder seleccionar el material de la correa, se debe tener en cuenta el peso
     \hline
     \end{tabular}
     \end{table}
-Asimismo, a través de la selección de componentes se ha determinado unas dimensiones máximas de 65x45x30 mm. Considerando que la carcasa tenga un peso aproximado de 30 gramos, se tiene una masa de $0,0751 \,kg$ en total y a través de la Ecuación~\ref{ec:4.Finerciasl} se puede hallar la fuerza inercial producto del movimiento que realice el usuario.
+Asimismo, a través de la selección de componentes se ha determinado unas dimensiones máximas de 65x45x30 mm. Considerando que la carcasa tenga un peso aproximado de 30 gramos, se tiene una masa de $0.0751 \,kg$ en total y a través de la Ecuación~\ref{ec:4.Finerciasl} se puede hallar la fuerza inercial producto del movimiento que realice el usuario.
 \begin{align}
 \label{ec:4.Finerciasl}
 F=m\,a\,\,\,[\si{\newton}]
@@ -609,11 +622,12 @@ Según \textcite{4.presion}, para que una persona no sienta incomodidad o restri
 \end{align}
 
 Al multiplicar por el factor de seguridad, se obtiene $\mu_{min} =0,0404$, lo cual al ser muy pequeño, nos permite una gran posibilidad de materiales de correa. En un estudio realizado por \textcite{4.correas}, se indica que el coeficiente de fricción en la piel es de un promedio de
-$0,46\,\pm\,0,154$, siendo la silicona el material con un mayor coeficiente (0,6) y el nylon es aquel que cuenta con menor coeficiente de fricción (0,37). Sin embargo, en el presente trabajo se optó por utilizar nylon debido a su disponibilidad y ha sido utilizado previamente en dispositivos deportivos, lo cual asegura confort para el usuario.
+$0.46\,\pm\,0.154$, siendo la silicona el material con un mayor coeficiente (0.6) y el nylon es aquel que cuenta con menor coeficiente de fricción (0.37). Sin embargo, en el presente trabajo se optó por utilizar nylon debido a su disponibilidad y ha sido utilizado previamente en dispositivos deportivos, lo cual asegura confort para el usuario.
 
 
 \subsection{Selección del material de carcasa}
 En el caso de la carcasa, se tiene como opciones de material PETG y ABS, cuyas características principales se encuentran en la Tabla~\ref{tab:4.Caracteristicas materiales} . Ambos materiales son buenas opciones porque permiten tener ligereza, confort y rigidez. El material ABS permitiría un acabado más profesional ya que es comúnmente utilizado en diversos dispositivos. Sin embargo, tiene un mayor costo y una mayor dificultad de impresión debido a la expulsión de gases. Por ello, en este trabajo se optó por desarrollar la carcasa con el material PETG. 
+
 
 \begin{table}[H]
 \centering
@@ -623,13 +637,15 @@ En el caso de la carcasa, se tiene como opciones de material PETG y ABS, cuyas c
   cells = {c},
   hlines,
   vlines,
+  vline{3} = {-}{Black},
+  hline{-} = {1,3-4}{black},
 }
-Características            & PETG      & ABS       \\
-Densidad                   & 1.23g/cm3 & 1.01g/cm3 \\
-Módulo de elasticidad      & 2.0GPa    & 2.0GPa    \\
-Resistencia a tracción     & 50MPa     & 40MPa     \\
-Facilidad de impresión     & Alta      & Baja      \\
-Temperatura de deformación & 80°C      & 105°C     
+Características            & Unidades & PETG & ABS  \\
+Densidad                   & g/cm3    & 1.23 & 1.01 \\
+Módulo de elasticidad      & Gpa      & 2.0  & 2.0  \\
+Resistencia a tracción     & MPa      & 50   & 40   \\
+Facilidad de impresión     & -        & Alta & Baja \\
+Temperatura de deformación & °C       & 80   & 105  
 \end{tblr}
 \end{table}
 
@@ -661,7 +677,7 @@ En la siguiente Figura~\ref{fig:4.modeladoSUPERIOR} se puede apreciar la parte s
     % ---- Figura 1 ----
     \begin{minipage}[t]{0.48\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{CHPTRS/CH04_DISEÑO/imagenes/imag_3d/ensamble.png}
+        \includegraphics[width=\textwidth]{CHPTRS/CH04_DISEÑO/imagenes/imag_3d/Ensamble.png}
         \captionof{figure}{Modelado 3D del asistente}
         \label{fig:4.modelado}
     \end{minipage}
@@ -690,12 +706,12 @@ La Figura~\ref{fig:4.modeladoBase} muestra la parte inferior de la carcasa. En e
     \end{figure}
 
 
-Asimismo, tiene espacios donde se colocará el sensor MAX30102 y el motor de vibración que serán colocados por encaje a presión. Asimismo, tiene una caja donde será colocada la barra de inserción de la parte superior, como se mencionó previamente, este es solo para prototipado, ya que ambas partes irán pegadas. 
+Asimismo, tiene espacios donde se colocará el sensor MAX30102 y el motor de vibración que serán colocados por encaje a presión ( ver Figura~\ref{fig:4.modeladoBase2}). Asimismo, tiene una caja donde será colocada la barra de inserción de la parte superior, como se mencionó previamente, este es solo para prototipado, ya que ambas partes irán pegadas. 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{CHPTRS/CH04_DISEÑO/imagenes/imag_3d/Base_MOTOR_sENSOR.png}
     \caption{Encajes de presión para el sensor MAX3012 y el motor de vibración}
-    \label{fig:4.modeladoBase}
+    \label{fig:4.modeladoBase2}
     \captionsetup{justification=centering,margin=1cm}
     \end{figure}
 
@@ -726,9 +742,10 @@ Además, cuenta con un espacio para que el usuario pueda insertar el conector de
 \end{figure}
 
 \subsection{Sujeción de correa}
-En la carcasa se tienen barras circulares en ambos lados como se puede apreciar en la Figura~\ref{fig:4.cilindros}. Estas serán las encargadas de sujetar la correa y para determinar el diámetro del cilindro se consideró una longitud $L_1 =23\,mm$, fuerza de tensión $F_1=40\,\si{\newton}$. Esta se tuvo como aproximación en base a un estudio realizado por \textcite{4.diametro} , donde determinaron que se utilizaban tensiones de entre 20 y 60 \si{\newton} en las correas para un tratamiento de escoliosis; sin embargo, en este caso no se busca realizar un tratamiento de ajuste y se decidió optar por el valor promedio de este estudio.\\
+\label{sec:sujecion}
+En la carcasa se tienen barras circulares en ambos lados como se puede apreciar en la Figura~\ref{fig:4.cilindros}. Estas serán las encargadas de sujetar la correa y para determinar el diámetro del cilindro se consideró una longitud $L_1 =23\,mm$, fuerza de tensión $F_1=40\,\si{\newton}$. Esta última se tuvo como aproximación en base a un estudio realizado por \textcite{4.diametro} , donde determinaron que se utilizaban tensiones de entre 20 y 60 \si{\newton} en las correas para un tratamiento de escoliosis; sin embargo, en este caso no se busca realizar un tratamiento de ajuste y se decidió optar por el valor promedio de este estudio.\\
 
-A través de la Ecuación~\ref{ec:mmax} para sistemas empotrados  se determino el momento flector máximo $M_{max}=115 \,\si{\newton}.mm $ que soporta la barra circular empotrada en ambos lados. Posteriormente se utilizó la Ecuación~\ref{ec:diametro}, la cual fue despejado en base a las propiedades de una barra circular para poder determinar el diámetro mínimo que necesita tener el cilindro.
+A través de la Ecuación~\ref{ec:mmax} para sistemas empotrados  se determino el momento flector máximo $M_{max}=115 \,\si{\newton}mm $ que soporta la barra circular empotrada en ambos lados. Posteriormente se utilizó la Ecuación~\ref{ec:diametro}, la cual fue despejado en base a las propiedades de una barra circular para poder determinar el diámetro mínimo que necesita tener el cilindro.
 
 \begin{align}
 \label{ec:mmax}
@@ -742,7 +759,7 @@ M_{max}= \frac{F_1\,L_1}{8}\,\,\,[\si{\newton}.mm]
 d_{min}^3 > \frac{32\,M_{\text{max}}}{\pi\,\sigma}
 \end{align}
 
-De esta manera, considerando que el material tiene una resistencia de $\sigma = 50\,M\si{\pascal}$ (ver Tabla~\ref{tab:4.Caracteristicas materiales}) y reemplazando el valor de $M_{max}=115 \,\si{\newton}.mm $ se obtiene un diámetro mínimo $d_{min}= 2.86\,\si{\milli\meter} $. En el caso de la carcasa, se ha seleccionado un diámetro de 4 mm con un factor de seguridad de 1,39 aproximadamente.
+De esta manera, considerando que el material tiene una resistencia de $\sigma = 50\,M\si{\pascal}$ (ver Tabla~\ref{tab:4.Caracteristicas materiales}) y reemplazando el valor de $M_{max}=115 \,\si{\newton}mm $ se obtiene un diámetro mínimo $d_{min}= 2.86\,\si{\milli\meter} $. En el caso de la carcasa, se ha seleccionado un diámetro de 4 mm con un factor de seguridad de 1.39 aproximadamente.
 
 \begin{figure}[H]
     \centering
@@ -752,7 +769,7 @@ De esta manera, considerando que el material tiene una resistencia de $\sigma = 
     \captionsetup{justification=centering,margin=1cm}
     \end{figure}
 \subsection{Sujeción de tarjeta electrónica}
-Para la sujeción de la tarjeta electrónica, se han colocado 4 agujeros roscados en los extremos de la carcasa como el que se encuentra en la Figura\ref{fig:4.agujero}. Estas cuentan con un agujero donde se colocan insertos roscados para impresión 3D M2x3 junto con los tornillos M2x6 (ver Figura~\ref{fig:4.tornillo}, considerando que solo soportaran el peso de unos 50 gramos aproximadamente. No hay ningún inconveniente con utilizar estos tornillos.
+Para la sujeción de la tarjeta electrónica, se han colocado 4 agujeros roscados en los extremos de la carcasa como el que se encuentra en la Figura~\ref{fig:4.agujero}. Estas cuentan con un agujero donde se colocan insertos roscados para impresión 3D M2x3 junto con los tornillos M2x6 (ver Figura~\ref{fig:4.tornillo}, considerando que solo soportaran el peso de unos 50 gramos aproximadamente. No hay ningún inconveniente con utilizar estos tornillos.
 
 \begin{figure}[H]
     \centering
@@ -782,20 +799,21 @@ Para la sujeción de la tarjeta electrónica, se han colocado 4 agujeros roscado
 %%%%%%%%%%%%%%%%%SOFTWARE%%%%%%%%%%%%%%%%%%%
 \section{Diseño del software}
 \subsection{Sistema}
-Para el desarrollo de la programación, considerando que se utiliza un microcontrolador ESP32, se ha utilizado \textit{PlatformIO}, el cual es una herramienta que permite escribir aplicaciones para productos embebidos. Asimismo, se utilizó la librería \verb|ESP32 BLE Arduino @ ^1.0.1| para el manejo del ESP32, la librería \verb|SparkFun MAX3010x Pulse and Proximity Sensor Library @ ^1.1.2| para el manejo del sensor MAX30102 y la librería \verb|kosme/arduinoFFT@^2.0.4| para el procesamiento de la señal. Asimismo el código de programación utilizado se encuentra en Anexos.
+Para el desarrollo de la programación, considerando que se utiliza un microcontrolador ESP32, se ha utilizado \textit{PlatformIO}, el cual es una herramienta que permite escribir aplicaciones para productos embebidos. Asimismo, se utilizó la librería \verb!ESP32 BLE Arduino @ ^1.0.1! para el manejo del ESP32, la librería \verb!SparkFun MAX3010x Pulse and Proximity Sensor Library @ ^1.1.2! para el manejo del sensor MAX30102 y la librería \verb!kosme/arduinoFFT@^2.0.4! para el procesamiento de la señal. Asimismo las funciones principales de programación se encuentran en el Anexo \ref{an:Annex_F_CodigoSistema}.
 
-\subsubsection{Conexión BLE}
-La implementación de la conexión \textit{Bluetooth Low Energy (BLE)} se realizó mediante las librerías del mismo ESP32 (BLEDevice, BlEServer y BLEUtils). Una de las funciones principales es \textit{InitBLE()} donde se define el nombre del dispositivo, se crea un servidor BLE con un servicio, el cual cuenta con permisos de lectura y transmisión. Otra de las funciones principales es \textit{startAdvertising()} que permite que cualquier dispositivo móvil cercano pueda detectarlo. En esta función se envía el nombre del dispositivo y el identificador del servicio para facilitar su identificación. Asimismo, para la facilidad de su identificación, se le asignó el nombre de 'Asistente Cognitivo'.
+\subsubsection{Conexión \ac{BLE}}
+La implementación de la conexión \ac{BLE} se realizó mediante las librerías del mismo ESP32 (BLEDevice, BlEServer y BLEUtils). Una de las funciones principales es \verb!InitBLE()! donde se define el nombre del dispositivo, se crea un servidor \ac{BLE} con un servicio, el cual cuenta con permisos de lectura y transmisión. Otra de las funciones principales es \verb!startAdvertising()! que permite que cualquier dispositivo móvil cercano pueda detectarlo. En esta función se envía el nombre del dispositivo y el identificador del servicio para facilitar su identificación. Asimismo, para la facilidad de su identificación, se le asignó el nombre de ‘Asistente Cognitivo’.
 
 \subsubsection{Procesamiento de la señal}
 En este caso, el sistema inicia identificando la presencia o ausencia de contacto entre el sensor y la piel, mediante los valores extraídos del LED infrarrojo del MAX3012. Esta señal infrarroja se suaviza mediante un promedio móvil simple de 10 muestras para reducir el ruido y cuando supera un umbral mínimo, habilita el procesamiento del pulso.\\
 
 Una vez establecido el contacto, la señal suavizada es sometida a un umbral calculado a partir del rango dinámico de la señal a través de la diferencia entre el máximo y mínimo de la señal. Este umbral se actualiza continuamente para compensar cambios en la señal producidas por diferentes usuarios. Posteriormente, se produce la detección de pulsos, cuando la señal supera el umbral y posteriormente desciende, se considera que ha ocurrido un latido.\\
-Finalmente, con los latidos detectados se calcula el tiempo entre pulsos sucesivos (RR) y, a partir de este, la frecuencia cardíaca instantánea (BPM). Adicionalmente, se descartan valores fisiológicamente irregulares. Por ejemplo, no se toma en cuenta frecuencias mayores a 140 BPM. El diagrama de flujo para el procesamiento se encuentra en la Figura~\ref{fig:cod.sensor}.
+
+Finalmente, con los latidos detectados se calcula el \ac{RR} y, a partir de este, la \ac{BPM}. Adicionalmente, se descartan valores fisiológicamente irregulares. Por ejemplo, no se toma en cuenta frecuencias mayores a 140 BPM. El diagrama de flujo para el procesamiento se encuentra en la Figura~\ref{fig:cod.sensor}.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.5\textwidth]{CHPTRS/CH04_DISEÑO/imagenes/imag_cod/Diagrama procesamiento.pdf}
+\includegraphics[width=0.6\textwidth]{CHPTRS/CH04_DISEÑO/imagenes/imag_cod/Diagrama procesamiento.pdf}
 \caption{Diagrama de flujo del procesamiento de la señal}
 \label{fig:cod.sensor}
 \captionsetup{justification=centering,margin=1cm}
@@ -811,11 +829,11 @@ Finalmente, con los latidos detectados se calcula el tiempo entre pulsos sucesiv
 
 Para poder realizar el modelo de clasificación, se debe tener en consideración lo explicado en la Sección~\ref{sec:frecuenciaC}. Es decir, que una menor relación \ac{LF}/\ac{HF} es indicativo de una mayor atención sostenida, caso contrario es distracción, ya que esta será la base del clasificador realizado.\\
 
-En este caso, los tiempos entre pulsos sucesivos (RR) detectados en el procesamiento de la señal son acumulados y, considerando que estos  tiempos son irregulares, se realiza una interpolación lineal. Posteriormente, se utiliza Transformada de Fourier, ya que permite transformar la serie temporal de intervalos RR en su representación espectral. Este espectro permite calculas las bandas de baja frecuencia \ac{LF}, las de ata frecuencia \ac{HF} y, en consecuencia, la relación entre estas.\\
+En este caso, los \ac{RR} detectados en el procesamiento de la señal son acumulados y, considerando que estos  tiempos son irregulares, se realiza una interpolación lineal. Posteriormente, se utiliza \ac{FFT}, ya que permite transformar la serie temporal de intervalos \ac{RR} en su representación espectral. Este espectro permite calculas las bandas de baja frecuencia \ac{LF}, las de ata frecuencia \ac{HF} y, en consecuencia, la relación entre estas.\\
 
-Sin embargo, debido a que esta relación varía notablemente entre individuos, el sistema tiene un tiempo de calibración inicial, donde a través de los valores LF/HF, se construye un baseline personalizado para el usuario, la cual se basa en el promedio de los valores validos durante el periodo de calibración.\\
+Sin embargo, debido a que esta relación varía notablemente entre individuos, el sistema tiene un tiempo de calibración inicial, donde a través de los valores \ac{LF}/\ac{HF}, se construye un baseline personalizado para el usuario, la cual se basa en el promedio de los valores validos durante el periodo de calibración.\\
 
-Finalmente, se introduce un indice basado entre el valor actual de LF/HF y el baseline del usuario. Este indice permite determinar el estado de concentración del usuario, donde un valor significativamente menor al baseline  es catalogado como Alta concentración, cercanos como concentración moderada y valores muy superiores se asocian a distracción o falta de atención. En la siguiente Figura~\ref{fig:cod.clasficacion} se aprecia el diagrama de flujo para la clasificación
+Finalmente, se introduce un indice basado entre el valor actual de LF/HF y el baseline del usuario. Este indice permite determinar el estado de concentración del usuario, donde un valor significativamente menor al baseline  es catalogado como Alta concentración, cercanos como concentración moderada y valores muy superiores se asocian a distracción o falta de atención. En la siguiente Figura~\ref{fig:cod.clasficacion} se aprecia el diagrama de flujo para la clasificación.
 
 \begin{figure}[H]
 \centering
@@ -831,9 +849,9 @@ Finalmente, se introduce un indice basado entre el valor actual de LF/HF y el ba
 
 
 \subsection{Interfaz}
-El desarrollo del prototipado de  la interfaz se realizó mediante \textit{Flutter} en \textit{Android Studio}. Este esta pensando para que sea intuitivo para el usuario, de manera de que no tenga problemas al momento de establecer conexión y empezar su sesión de estudio. El código de esta interfaz se encuentra en Anexos.
+El desarrollo del prototipado de  la interfaz se realizó mediante \textit{Flutter} en \textit{Android Studio}. Este esta pensando para que sea intuitivo para el usuario, de manera de que no tenga problemas al momento de establecer conexión y empezar su sesión de estudio. El código main de esta interfaz se encuentra en el Anexo\ref{an:Annex_G_CodigoINter}.
 \subsubsection{Conexión}
-Esta sección corresponde a la pantalla inicial del aplicativo (ver Figura~\ref{fig:interfaz.conexion}). En esta, el usuario puede establecer conexión mediante BLE con el asistente de manera automática, ya que siempre se busca al dispositivo con dicho nombre. Asimismo, se tiene un botón que permite acceder al menú principal sin la necesidad de establecer conexión para que el usuario pueda acceder a su historial. 
+Esta sección corresponde a la pantalla inicial del aplicativo (ver Figura~\ref{fig:interfaz.conexion}). En esta, el usuario puede establecer conexión mediante \ac{BLE} con el asistente de manera automática, ya que siempre se busca al dispositivo con dicho nombre. Asimismo, se tiene un botón que permite acceder al menú principal sin la necesidad de establecer conexión para que el usuario pueda acceder a su historial. 
 
 \subsubsection{Menú principal}
 En esta interfaz que se puede apreciar en la Figura~\ref{fig:interfaz.menu}, el usuario accede una vez establecida la conexión BLE con el asistente de concentración. Además tiene la posibilidad de acceder a las demás pestañas, las cuales son 'Iniciar Sesión de estudio', 'Historial' y 'Configuración'.
@@ -927,43 +945,46 @@ La pestaña Historial (ver Figura~\ref{fig:interfaz.Historial}) muestra la lista
 \section{Costos}
 En esta sección se presentan los costos para el desarrollo del asistente. Asimismo, se debe recalcar que el diseño del asistente se baso en componentes disponibles localmente y que no se están considerando costos de ensamblaje de los componentes con la carcasa. 
 \subsection{Costo de materiales eléctricos}
-En la tabla~\ref{tab:4.Costo componentes}, se muestra la estimación de los costos de los componentes electrónicos que se utilizan en el diseño electrónico del dispositivo con un total de S/.109.90. Sin embargo, se tiene que tener en cuenta que no se esta considerando los costos de envió, al cual se le asignará un aproximado de S/.40, obteniendo un costo final de materiales eléctricos de S/.149.90. 
+En la tabla~\ref{tab:4.Costo componentes}, se muestra la estimación de los costos de los componentes electrónicos que se utilizan en el diseño electrónico del dispositivo con un total de S/.\,109.90. Sin embargo, se tiene que tener en cuenta que no se esta considerando los costos de envió, al cual se le asignará un aproximado de S/.,40, obteniendo un costo final de materiales eléctricos de S/.\,149.90. 
 
 \begin{table}[H]
 \centering
 \caption{Costo de componentes electrónicos}
 \label{tab:4.Costo componentes}
-\begin{tabular}{|c|c|c|c|c|} 
+\begin{tabular}{|l|c|c|c|} 
 \hline
-Componente                  & Proveedor         & Precio Unitario (S/.) & Cantidad & Precio Total  \\ 
+\multicolumn{1}{|c|}{Ítem}  & Proveedor & Cant. & Precio S/.  \\ 
 \hline
-Módulo ESP32                & Electromanía      & S/.38               & 1        & S/.38     \\ 
+Módulo ESP32                & A         & 1    & 38          \\ 
 \hline
-Sensor MAX30102             & Electromanía      & S/.20                 & 1        & S/.20         \\ 
+Sensor MAX30102             & A         & 1    & 20          \\ 
 \hline
-Regulador de voltaje MT3608 & Electromanía      & ~S/.5                 & 1        & S/.5          \\ 
+Regulador de voltaje MT3608 & A         & 1    & 5           \\ 
 \hline
-Regulador de voltaje MP1584 & Hi-FI electrónica & S/.3.90               & 1        & S/.3.90       \\ 
+Regulador de voltaje MP1584 & B         & 1    & 3.90        \\ 
 \hline
-Motor de Vibración          & Hi-FI electrónica & S/.1.70               & 1        & S/.1.70       \\ 
+Motor de Vibración          & B         & 1    & 1.70        \\ 
 \hline
-Modulo de Carga~ HW373      & SAISAC            & S/.4                  & 1        & S/.4          \\ 
+Modulo de Carga~ HW373      & C         & 1    & 4           \\ 
 \hline
-Batería de Litio 1000mAh    & HI-Fi electrónica & S/.11.30              & 1        & S/.11.30      \\ 
+Batería de Litio 1000mAh    & B         & 1    & 11.30       \\ 
 \hline
-Botón de encendido          & Hi-Fi electrónica & S/.0.80               & 1        & S/.0.80       \\ 
+Botón de encendido          & B         & 1    & 0.80        \\ 
 \hline
-Transistor 2N3904           & Hi-Fi electrónica & S/.0.20               & 1        & S/.0.20       \\ 
+Transistor 2N3904           & B         & 1    & 0.20        \\ 
 \hline
-PCB                         &           PCB Perú        & S/.25                   & 1        & S/.25           \\ 
+PCB                         & D         & 1    & 25          \\ 
 \hline
-\multicolumn{4}{|c|}{Total}                                                        &     S/.109.90          \\
+\multicolumn{3}{|c|}{Costo Total}              & 109.90  \\
 \hline
+
 \end{tabular}
+\caption*{\textit{Nota: Proveedor A = Electromanía, B = Hi-Fi electrónica, C = SAISAC, D = PCB Perú}}
 \end{table}
+%A=ELECTROMANiA, B= Hi-Fi electrónica, C= SAISAC, D= PCB Perú
 \subsection{Costo de componentes y materiales mecánicos}
 
-En esta sección se detallan las estimaciones de costos de fabricación de la carcasa y la correa. En la Tabla~\ref{tab:4.Costo carcasa} se muestra los costos de fabricación de la carcasa tanto de la parte inferior como de la parte superior. La cotización pertenece a 3Dprint.pe.
+En esta sección se detallan las estimaciones de costos de fabricación de la carcasa y la correa. En la Tabla~\ref{tab:4.Costo carcasa} se muestra los costos de fabricación de la carcasa tanto de la parte inferior como de la parte superior. La cotización pertenece a La cotización pertenece a \href{https://3dprint.pe}{\textcolor{black}{3Dprint.pe}}.
 
 \begin{table}[H]
 \centering
@@ -971,17 +992,17 @@ En esta sección se detallan las estimaciones de costos de fabricación de la ca
 \label{tab:4.Costo carcasa}
 \begin{tabular}{|c|c|c|} 
 \hline
-Componente                  & Cantidad & Precio Total (S/.)  \\ 
+Componente                  & Cant. & Precio (S/.)  \\ 
 \hline
 Carcasa-Parte inferior-PETG & 1        & 34         \\ 
 \hline
 Carcasa-Parte superior-PETG & 1        & 18         \\ 
 \hline
-\multicolumn{2}{|c|}{Total}            & 52         \\
+\multicolumn{2}{|c|}{Costo Total}            & 52         \\
 \hline
 \end{tabular}
 \end{table}
-Asimismo, se deben considerar los elementos de sujeción tanto para la tarjeta como para la carcasa. Esta se encuentra en la Tabla~\ref{tab:4.Costo sujeción}, obteniendo  un total de S/.32.70. Sin embargo, se debe mencionar que la correa de Nylon es vendida por rollo, lo cual daría abasto para múltiples asistentes.
+Asimismo, se deben considerar los elementos de sujeción tanto para la tarjeta como para la carcasa. Esta se encuentra en la Tabla~\ref{tab:4.Costo sujeción}, obteniendo  un total de S/.\,32.70. Sin embargo, se debe mencionar que la correa de Nylon es vendida por rollo, lo cual daría abasto para múltiples asistentes.
 
 \begin{table}[H]
 \centering
@@ -989,24 +1010,25 @@ Asimismo, se deben considerar los elementos de sujeción tanto para la tarjeta c
 \label{tab:4.Costo sujeción}
 \begin{tabular}{|c|c|c|c|c|} 
 \hline
-Componente                                                                           & Proveedor      & Precio Unitario (S/.) & Cantidad & Precio Total(S/.)  \\ 
+Componente                                                                           & Proveedor      & Precio Unitario (S/.) & Cant. & Precio Total(S/.)  \\ 
 \hline
-\begin{tabular}[c]{@{}c@{}}Inserto roscado para\\impresion 3D con perno\end{tabular} & MTLab          & 0.5                & 4        & 2.0        \\ 
+\begin{tabular}[c]{@{}c@{}}Inserto roscado para\\impresion 3D con perno\end{tabular} & A          & 0.5                & 4        & 2.0        \\ 
 \hline
-Correa de Nylon                                                                      & Deming Taguchi & 24                  & 1        & 24         \\ 
+Correa de Nylon                                                                      & B & 24                  & 1        & 24         \\ 
 \hline
-Velcro adhesivo                                                                      & Coto Trapillo  & 3.1                & 2        & 6.20       \\ 
+Velcro adhesivo                                                                      & C  & 3.1                & 2        & 6.20       \\ 
 \hline
-\multicolumn{4}{|c|}{Total}                                                                                                              & 32.20       \\
+\multicolumn{4}{|c|}{Costo Total}                                                                                                              & 32.20       \\
 \hline
 \end{tabular}
+\caption*{\textit{Nota: Proveedor A = MTLab, B = Deming Taguchi, C = Coto Trapillo}}
 \end{table}
 
-Finalmente, se obtiene un costo de materiales mecánicos en total de S/.84.20 considerando ambas tablas previas. Sin embargo, al igual que en los materiales eléctricos, se va a considerar un precio de envió aproximado de S/.40, obteniendo un costo final de S/.124.20. 
+Finalmente, se obtiene un costo de materiales mecánicos en total de S/.\,84.20 considerando ambas tablas previas. Sin embargo, al igual que en los materiales eléctricos, se va a considerar un precio de envió aproximado de S/.\,40, obteniendo un costo final de S/.\,124.20. 
 
 
 \subsection{Costo total}
-El costo total se resume en la siguiente Tabla~\ref{tab:4.Costo materiales} con un costo de materiales de S/.234.6, lo cual es un indicatorio que a pesar de enfocarlo a componentes locales, se obtuvo un costo promedio considerando que uno de los requisitos era tener el menor costo posible. 
+El costo total se resume en la siguiente Tabla~\ref{tab:4.Costo materiales} con un costo de materiales de S/.\,234.6, lo cual es un indicatorio que a pesar de enfocarlo a componentes locales, se obtuvo un costo promedio considerando que uno de los requisitos era tener el menor costo posible. 
 
 \begin{table}[H]
 \centering
@@ -1014,18 +1036,18 @@ El costo total se resume en la siguiente Tabla~\ref{tab:4.Costo materiales} con 
 \label{tab:4.Costo materiales}
 \begin{tabular}{|c|c|} 
 \hline
-Materiales            & Precio Total (S/.) \\ 
+Materiales            & Precio (S/.) \\ 
 \hline
 Materiales Eléctricos & 109.90     \\ 
 \hline
 Materiales Mecánicos  & 124.20     \\ 
 \hline
-Total                 & 234.10      \\
+Costo Total                 & 234.10      \\
 \hline
 \end{tabular}
 \end{table}
 
-
+\cleardoublepage
 \section{Prototipado y validación}
 \subsection{Carcasa impresa}
 Se realizó la impresión de la carcasa con PETG como se puede apreciar en la Figura~\ref{fig:impreso}, se obtuvo el diseño esperado sin inconvenientes. Sin embargo, se tuvo que retirar manualmente las venas producidas como soporte durante la impresión 3D.
@@ -1054,64 +1076,56 @@ Se realizó la impresión de la carcasa con PETG como se puede apreciar en la Fi
     \label{fig:impreso}
 \end{figure}
 \subsection{Validación de sujeción de correa}
-Para poder validar la sujeción de la correa, se utilizó una báscula manual para maletas que se puede apreciar en la Figura~\ref{fig:sim.bscula}. Esta se colocó en una de las barras circulares como se puede apreciar en la Figura~\ref{fig:sim.basculacolocada}.
+Para poder validar la sujeción de la correa, se utilizó una báscula manual para maletas que se puede apreciar en la Figura~\ref{fig:sim.bscula}. Esta se colocó en una de las barras circulares como se puede apreciar en la Figura~\ref{fig:sim.basculacolocada}.\\
+
+Los resultados son satisfactorios, ya que al momento de realizar la tensión manualmente se obtuvo un valor aproximado de 10 kg como se puede apreciar en la Figura~\ref{fig:sim.valor}, lo cual equivale a 98.1N. validando los resultados de los cálculos realizados previamente (ver Sección \ref{sec:sujecion}) para las barras circulares con una fuerza de 40N. 
 
 \begin{figure}[H]
     \centering
-    % Primera imagen
-    \begin{subfigure}{0.5\textwidth}
+    
+    %FILA 1 
+    \begin{subfigure}[b]{0.48\textwidth}
         \centering
         \includegraphics[width=0.75\linewidth]{CHPTRS/CH04_DISEÑO/imagenes/imag_sim/Báscula colocada.png}
         \caption{Báscula colocada}
         \label{fig:sim.basculacolocada}
-        
     \end{subfigure}
-    \hfill
-    % Segunda imagen
-    \begin{subfigure}{0.4\textwidth}
-       
-
+    \hfill % Relleno para separarlas horizontalmente
+    \begin{subfigure}[b]{0.48\textwidth}
         \centering
-        \includegraphics[width=0.85\linewidth]{CHPTRS/CH04_DISEÑO/imagenes/imag_sim/Báscula.png}
+        \includegraphics[width=0.65\linewidth]{CHPTRS/CH04_DISEÑO/imagenes/imag_sim/Báscula.png}
         \caption{Báscula digital}
         \label{fig:sim.bscula}
-        
     \end{subfigure}
-    \caption{Báscula utilizada en pruebas}
-    \label{fig:impreso}
-\end{figure}
-
-Los resultados son satisfactorios, ya que al momento de realizar la tensión manualmente se obtuvo un valor aproximado de 10 kg como se puede apreciar en la Figura~\ref{fig:sim.sujecion}, lo cual equivale a 98.1N. validando los resultados de los cálculos realizados previamente para las barras circulares con una fuerza de 40N. 
-\begin{figure}[H]
-    \centering
-    % Primera imagen
-    \begin{subfigure}{0.5\textwidth}
+    
+    % 
+    \par\bigskip 
+    
+    %  FILA 2
+    \begin{subfigure}[b]{0.48\textwidth}
         \centering
-        \includegraphics[width=0.75\linewidth]{CHPTRS/CH04_DISEÑO/imagenes/imag_sim/prueba sujecion.png}
+        \includegraphics[width=0.6\linewidth]{CHPTRS/CH04_DISEÑO/imagenes/imag_sim/prueba sujecion.png}
         \caption{Tensión en carcasa}
-        %\label{fig:sim.basculacolocada}
-        
+        \label{fig:sim.tension}
     \end{subfigure}
     \hfill
-    % Segunda imagen
-    \begin{subfigure}{0.4\textwidth}
-       
-
+    \begin{subfigure}[b]{0.48\textwidth}
         \centering
-        \includegraphics[width=0.8\linewidth]{CHPTRS/CH04_DISEÑO/imagenes/imag_sim/valor sujecion.png}
+        \includegraphics[width=0.6\linewidth]{CHPTRS/CH04_DISEÑO/imagenes/imag_sim/valor sujecion.png}
         \caption{Valor de báscula}
-       % \label{fig:sim.bscula}
-        
+        \label{fig:sim.valor}
     \end{subfigure}
+    
+    %  TÍTULO GLOBAL
     \caption{Prueba de sujeción}
-    \label{fig:sim.sujecion}
+    \label{fig:sim.sujecion_global}
 \end{figure}
 
 \subsection{Señal del sensor y estado de concentración}
 Para evaluar la señal del sensor MAX30102, este fue colocado en una zona braquial del brazo derecho, como se puede observar en la Figura~\ref{fig:sim.brazo}. Durante las pruebas, la señal fue procesada completamente en el microcontrolador ESP32, realizando la detección de pulsos y estimación del ritmo cardíaco en tiempo real, demostrando que el microcontrolador seleccionado es óptimo para el asistente.\\
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{CHPTRS/CH04_DISEÑO/imagenes/imag_sim/SensorBrazo.png}
+    \includegraphics[width=0.35\textwidth]{CHPTRS/CH04_DISEÑO/imagenes/imag_sim/SensorBrazo.png}
     \caption{Sensor MAX30102 colocado en el brazo}
     \label{fig:sim.brazo}
     \captionsetup{justification=centering,margin=1cm}
@@ -1126,3 +1140,26 @@ Las pruebas realizadas demuestran  que el largo del cable entre el sensor y el  
     \label{fig:sim.resultados}
     \captionsetup{justification=centering,margin=1cm}
 \end{figure}
+
+Asimismo, en la prueba realizada se obtuvo un baseline estimado de 1.08, que corresponde al patrón noraml del usuario en reposo. En los primeros segundos, se observaron valores elevados de \ac{LF}/\ac{HF} de 1.43, asociados directamente a distracción. Esta fue disminuyendo hasta valores aproximados de 0.8, indicativo de concentración sostenida. Adicionalmente, se detectaron periodos con valores cercanos al baseline, lo cual indica concentración moderada. Estos resultados demuestran que es sistema es capaz de identficar de manera dinámica transiciones entre estados de concentración con la variabilidad de la frecuencia cardíaca. Sin embargo, durante la prueba también se presentaron periodos donde el usuario detecto distracción (ultimo momento en la Tabla~\ref{tab:4.pruebaSens}), pero el sistema clasificó como concentración, lo cual evidencia que se deben realizar ajustes al umbral dinámico realizado y una mayor cantidad de pruebas con distintos usuarios para poder identificar las causas de  estos errores del umbral y mejorar la robustez del sistema.
+
+\begin{table}[H]
+\centering
+\caption{Momentos clave durante la prueba del usuario}
+\label{tab:4.pruebaSens}
+\begin{tblr}{
+  row{odd} = {c},
+  row{2} = {c},
+  row{6} = {c},
+  hlines,
+  vlines,
+}
+Momento                        & LF    & HF    & LF/HF & Estado                 \\
+Inicio posterior a calibración & 23.32 & 16.21 & 1.44  & Distracción            \\
+Transición 1                    & 18.85 & 19.71 & 0.96  & Alta concentración     \\
+Transición 2                    & 18.02 & 21.71 & 0.83  & Alta concentración     \\
+Fase estable de concentración  & 12.67 & 25.94 & 0.44  & Alta concentración     \\
+Transición 3                   & 19.37 & 19.06 & 1.02  & Concentración Moderada \\
+Ultima fase de concentración   & 18.79 & 22.48 & 0.83  & Alta concentración     
+\end{tblr}
+\end{table}

@@ -8,6 +8,8 @@
 \usepackage[onehalfspacing]{setspace}   % distance between lines 1-1/2-lines
 \usepackage[utf8]{inputenc} % caracteres especiales como la ñ
 \usepackage[spanish]{babel} % caracteres del español
+\decimalpoint
+
 \usepackage[T1]{fontenc}    % correcta representacion de varias tildes/acentos, p.ej. en alemán 'ß'
 \usepackage{csquotes}
 \usepackage[backend=biber,natbib=true,style=apa]{biblatex}
@@ -42,7 +44,6 @@
 \ofoot[]{\thepage}
 
 % Add your packages here
-\usepackage{siunitx}
 
 \usepackage{minted}
 
@@ -164,7 +165,10 @@
 \usepackage{amsmath} 
 \usepackage{amssymb}
 \usepackage{amsthm}
-\usepackage{siunitx}
+
+\usepackage[output-decimal-marker={.}]{siunitx}
+
+
 \usepackage[shortcuts]{extdash}
 \usepackage[printonlyused]{acronym} %for acronyms
 \makeatletter
@@ -214,3 +218,20 @@
 \input{style/usDefCmd/DefsConstants.tex}
 
 
+\usepackage{listings}
+\renewcommand{\lstlistingname}{Listing}
+
+\lstdefinelanguage{Dart}{
+  keywords={class, extends, return, new, void, import, final, const, async, await, override, true, false, null, if, else, for, while, var, dynamic, late, required, static, super},
+  keywordstyle=\color{dartKeyword}\bfseries,
+  ndkeywords={Widget, BuildContext, State, StatefulWidget, StatelessWidget, MaterialApp, Scaffold, AppBar, Text, Center, Column, ElevatedButton, Image, Navigator, Future, Stream, AsistenteApp, StartScreen},
+  ndkeywordstyle=\color{dartClass}\bfseries,
+  identifierstyle=\color{black},
+  sensitive=true,
+  comment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  commentstyle=\color{dartComment}\ttfamily,
+  stringstyle=\color{dartString}\ttfamily,
+  morestring=[b]',
+  morestring=[b]"
+}
